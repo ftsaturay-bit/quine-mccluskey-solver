@@ -1,0 +1,33 @@
+/* Basic minimal styles */
+body {
+  font-family: sans-serif;
+  margin: 20px;
+}
+
+.app {
+  max-width: 600px;
+}
+
+form div {
+  margin-bottom: 12px;
+}
+
+input {
+  margin-top: 4px;
+  padding: 6px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+button {
+  margin-right: 8px;
+  padding: 6px 14px;
+  cursor: pointer;
+}
+
+pre {
+  background: #f4f4f4;
+  padding: 12px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
