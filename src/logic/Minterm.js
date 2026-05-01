@@ -45,7 +45,7 @@ export default class Minterm {
   countNumberOfOnes() {
     let count = 0;
     for(let i = 0; i < this.binaryRepresentation.length; i ++){
-      //checks if the specific np. in the binary representation = 1
+      //checks if the specific no. in the binary representation = 1
       if(this.binaryRepresentation[i] === "1"){
         //increments the count if i = 1
         count++;
@@ -57,10 +57,10 @@ export default class Minterm {
   toBinaryString(value, numberOfVariables) {
     let binaryString = "";
     while(value > 0){
-      //modulo operator returns the remainder when value is divided by 2 (0 or 1)
+      //modulo operator returns the remainder when value is divided by 2 (0 or 1) which serves as the ai coefficient for the binary string
       let remainders = value%2;
 
-      //concatenates the remainder and appends to the binary string
+      //concatenates the remainder coefficient and appends to the binary string
       binaryString = remainders + binaryString;
 
       //starts the next loop with the next whole number
@@ -132,19 +132,19 @@ export default class Minterm {
       }
 
       
-    // TODO: For '0', append variables[i] + "'" (complemented literal) to the expression
+    //For '0', append variables[i] + "'" (complemented literal) to the expression
       else if (bit === '0') {
         finalExpression += variables[i] + "'";
       }
 
       
-    // TODO: For '1', append variables[i] (uncomplemented literal) to the expression
+    //For '1', append variables[i] (uncomplemented literal) to the expression
       else if (bit === '1') {
         finalExpression += variables[i];
       }
     }
 
-    // TODO: Return the final expression string
+    //Return the final expression string
     return finalExpression;
   }
 
