@@ -46,7 +46,7 @@ export default class Minterm {
     let count = 0;
     for(let i = 0; i < this.binaryRepresentation.length; i ++){
       //checks if the specific np. in the binary representation = 1
-      if(this.binaryRepresentation[i] === 1){
+      if(this.binaryRepresentation[i] === "1"){
         //increments the count if i = 1
         count++;
       }
@@ -68,7 +68,7 @@ export default class Minterm {
     }
 
     //Left-pad with '0's until the string length equals numberOfVariables
-    while(binaryRepresentation.length < numberOfVariables){
+    while(binaryString.length < numberOfVariables){
       binaryString = "0" + binaryString;
     }
     
@@ -98,7 +98,7 @@ export default class Minterm {
       let newBinaryString = this.binaryRepresentation.substring(0,index) + "-" + this.binaryRepresentation.substring(index + 1);
 
       //Merge the two setOfMinterms into a new combined Set
-      let combined = new Set();
+      let combinedSet = new Set();
 
       for (let item of this.getSetOfMinterms()) {
         combinedSet.add(item);
@@ -134,13 +134,13 @@ export default class Minterm {
       
     // TODO: For '0', append variables[i] + "'" (complemented literal) to the expression
       else if (bit === '0') {
-        expression += variables[i] + "'";
+        finalExpression += variables[i] + "'";
       }
 
       
     // TODO: For '1', append variables[i] (uncomplemented literal) to the expression
       else if (bit === '1') {
-        expression += variables[i];
+        finalExpression += variables[i];
       }
     }
 
