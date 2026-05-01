@@ -3,18 +3,40 @@ import Minterm from './Minterm';
 export default class QuineMcCluskeyAlgorithm {
 
   constructor(mintermsDecimal, variablesLetter) {
-    // TODO: Store the original list of minterms (mintermsDecimal) and the variable letters (variablesLetter)
-    // TODO: Compute numberOfVariables from variablesLetter.length
-    // TODO: Generate the complement (maxterms) by calling generateComplement(mintermsDecimal)
+    //Store the original list of minterms (mintermsDecimal) and the variable letters (variablesLetter)
+    this.mintermsDecimal = mintermsDecimal;
+    this.variablesLetter = variablesLetter;
+
+    //Get the number Of Variables 
+    this.numberOfVariables = variablesLetter.length;
+
+    //Generate the maxterms
     //       and store the result as this.mintermsDecimal
-    // TODO: Initialize this.mintermList as an empty array
-    // TODO: Initialize this.simplification as an empty array (will hold groups at each iteration)
-    // TODO: Initialize this.primeImplicants as an empty array
-    // TODO: Initialize this.essentialPrimeImplicants as an empty array
-    // TODO: Initialize display string fields:
-    //         this.simplificationDisplay, this.primeImplicantTableDisplay, this.essentialPrimeImplicantsDisplay
-    // TODO: Convert each decimal value in this.mintermsDecimal into a Minterm object
-    //       and push it to this.mintermList
+    this.mintermsDecimal = this.generateComplement(mintermsDecimal);
+
+    //Initialize minterm list
+    this.mintermList = [];
+
+    //Initialize an empty array that will hold groups at each iteration
+    this.simplification = [];
+
+    //Initialize an empty array that will store prime implicants
+    this.primeImplicants = [];
+
+    //Initialize an empty array that will store essential prime implicants
+    this.essentialPrimeImplicants = [];
+
+    //Initialize the ff display string fields: this.simplificationDisplay, this.primeImplicantTableDisplay, this.essentialPrimeImplicantsDisplay
+    this.simplificationDisplay = "";
+    this.primeImplicantTableDisplay = "";
+    this.essentialPrimeImplicantsDisplay = "";
+
+    //Convert each decimal value in this.mintermsDecimal into a Minterm object and push it to this.mintermList
+    for(let i = 0; i < this.mintermsDecimal.length; i++){
+      let decimalValue = this.mintermsDecimal[i];
+      let MintermObject = new Minterm(decimalValue, this.numberOfVariables);
+      this.mintermList.push(MintermObject);
+    }
   }
 
   // TODO: Given the original minterms array, compute and return all integers in range [0, 2^n)
