@@ -165,13 +165,19 @@ export default class QuineMcCluskeyAlgorithm {
   }
 
   getPrimeImplicantTableData() {
-    // TODO: Return a structured object:
-    //   {
-    //     primeImplicants: [ { expression: string, minterms: number[] }, ... ],
-    //     minterms: number[]
-    //   }
-    // TODO: Use mintermToPOSExpression(pi) for the expression string
-    // TODO: Spread pi.getSetOfMinterms() into an array for minterms
+    return {
+      // For each prime implicant, build an object with its expression and the minterms it covers
+      primeImplicants: this.primeImplicants.map(pi => ({
+        // Convert the prime implicant to a POS expression string e.g. "(A + B')"
+        expression: this.mintermToPOSExpression(pi),
+
+        // getSetOfMinterms() returns a Set — spread it into a plain array e.g. [0, 3]
+        minterms: [...pi.getSetOfMinterms()]
+      })),
+
+      // The full list of maxterm decimal values used as columns in the table
+      minterms: this.mintermsDecimal
+    };
   }
 
   mintermToPOSExpression(minterm) {
