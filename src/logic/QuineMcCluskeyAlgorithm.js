@@ -66,10 +66,15 @@ export default class QuineMcCluskeyAlgorithm {
   }
 
   groupByOnes() {
-    // TODO: Create an array of (numberOfVariables + 1) empty sub-arrays — one per possible count of 1s
-    // TODO: For each Minterm in this.mintermList, call countNumberOfOnes()
-    //       and push the minterm into the matching group index
-    // TODO: Return the groups array
+    // Initialize (numberOfVariables + 1) empty groups, one per possible count of 1s
+    let groups = Array.from({ length: this.numberOfVariables + 1 }, () => []);
+
+    // Place each minterm into the group matching its number of 1-bits
+    for (let minterm of this.mintermList) {
+      groups[minterm.countNumberOfOnes()].push(minterm);
+    }
+
+    return groups;
   }
 
   findPrimeImplicants(groups) {
