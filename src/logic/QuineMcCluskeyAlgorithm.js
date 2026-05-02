@@ -157,11 +157,47 @@ export default class QuineMcCluskeyAlgorithm {
   }
 
   createPrimeImplicantTable() {
-    // TODO: Build a text table where:
-    //   - Columns represent each maxterm decimal value
-    //   - Rows represent each prime implicant
-    //   - Mark an 'X' where a prime implicant covers a maxterm (pi.doesItMatch(m))
-    // TODO: Store result in this.primeImplicantTableDisplay
+    // Start with an empty string that will build up the entire table
+    let table = "";
+
+    // Build the header row — blank space for the PI column, then each maxterm value
+    let header = "        |";
+    for (let m of this.mintermsDecimal) {
+      // Add each maxterm decimal value as a column header
+      header += ` ${m}  |`;
+    }
+
+    // Add the header row to the table
+    table += header + "\n";
+
+    // Add a separator line the same width as the header
+    table += "-".repeat(header.length) + "\n";
+
+    // Build one row for each prime implicant
+    for (let pi of this.primeImplicants) {
+      // Get the POS expression for this prime implicant e.g. "(A + B')"
+      let expression = this.mintermToPOSExpression(pi);
+
+      // Pad the expression to 8 characters so all rows are aligned
+      let row = expression.padEnd(8) + "|";
+
+      // For each maxterm, check if this prime implicant covers it
+      for (let m of this.mintermsDecimal) {
+        if (pi.doesItMatch(m)) {
+          // This PI covers this maxterm — mark with X
+          row += " X  |";
+        } else {
+          // This PI does not cover this maxterm — leave blank
+          row += "    |";
+        }
+      }
+
+      // Add this row to the table
+      table += row + "\n";
+    }
+
+    // Store the finished table string into the display field
+    this.primeImplicantTableDisplay = table;
   }
 
   getPrimeImplicantTableData() {
@@ -222,25 +258,102 @@ export default class QuineMcCluskeyAlgorithm {
   }
 
   displayGroupedMinterms() {
-    // TODO: Return a formatted string from this.simplification[0] (first iteration groups)
-    // TODO: Show the original minterms, the complement being used, and each group with
-    //       its decimal value and binary representation
+    // Start with an empty string that will hold the entire display
+    let display = "";
+
+    // Show the original minterms that were passed in by the user
+    display += `Original Minterms: ${this.mintermsDecimal}\n`;
+
+    // Show the complement (maxterms) being used for POS simplification
+    display += `Complement (Maxterms) Used: ${this.mintermsDecimal}\n\n`;
+
+    // Get the first iteration groups from simplification (the initial grouping)
+    let initialGroups = this.simplification[0];
+
+    display += "Grouped Minterms:\n";
+
+    // Loop through each group (group 0 = zero 1-bits, group 1 = one 1-bit, etc.)
+    for (let i = 0; i < initialGroups.length; i++) {
+
+      // Skip empty groups — no minterms have this many 1-bits
+      if (initialGroups[i].length === 0) continue;
+
+      // Show the group number (number of 1-bits)
+      display += `Group ${i} (${i} ones):\n`;
+
+      // Show each minterm in this group with its decimal value and binary representation
+      for (let minterm of initialGroups[i]) {
+        display += `  ${minterm.getValue()} → ${minterm.getBinaryRepresentation()}\n`;
+      }
+
+      display += "\n";
+    }
+
+    return display;
   }
+
 
   displayCombiningTerms() {
-    // TODO: Return a string showing each iteration (from simplification index 1 onwards)
-    // TODO: For each iteration show each group's combined terms with their binary rep
-    //       and the list of source minterms they were combined from
-    // TODO: After all iterations, list all final prime implicants with their expressions
-    //       and the maxterms they cover
+    // Start with an empty string that will hold the entire display
+    let display = "";
+
+    // Loop through each iteration starting from index 1 (index 0 is the initial grouping)
+    for (let iter = 1; iter < this.simplification.length; iter++) {
+      // Show which iteration we are on
+      display += `Iteration ${iter}:\n`;
+
+      // Get the groups for this iteration
+      let iterationGroups = this.simplification[iter];
+
+      // Loop through each group in this iteration
+      for (let i = 0; i < iterationGroups.length; i++) {
+
+        // Skip empty groups
+        if (iterationGroups[i].length === 0) continue;
+
+        // Show the group number
+        display += `  Group ${i}:\n`;
+
+        // Show each combined term with its binary representation and source minterms
+        for (let minterm of iterationGroups[i]) {
+          // Get the binary representation of this combined term e.g. "01-"
+          let binary = minterm.getBinaryRepresentation();
+
+          // Get the source minterms this term was combined from e.g. [0, 3]
+          let sources = [...minterm.getSetOfMinterms()].join(", ");
+
+          display += `    ${binary} (from: ${sources})\n`;
+        }
+      }
+
+      display += "\n";
+    }
+
+    // After all iterations, list all final prime implicants
+    display += "Final Prime Implicants:\n";
+
+    for (let pi of this.primeImplicants) {
+      // Show the POS expression, binary representation, and maxterms it covers
+      let expression = this.mintermToPOSExpression(pi);
+      let binary = pi.getBinaryRepresentation();
+      let covers = [...pi.getSetOfMinterms()].join(", ");
+
+      display += `  ${expression} | ${binary} | covers: ${covers}\n`;
+    }
+
+    return display;
   }
+
 
   displayPrimeImplicantsTable() {
-    // TODO: Return this.primeImplicantTableDisplay (set by createPrimeImplicantTable)
+    // Return the text table built by createPrimeImplicantTable()
+    return this.primeImplicantTableDisplay;
   }
 
+
   displayEssentialPrimeImplicantsTable() {
-    // TODO: Return this.essentialPrimeImplicantsDisplay (set by findEssentialPrimeImplicants)
+    // Return the display string built by findEssentialPrimeImplicants()
+    return this.essentialPrimeImplicantsDisplay;
   }
 
   getPOS() {
