@@ -32,7 +32,7 @@ export default class QuineMcCluskeyAlgorithm {
     this.essentialPrimeImplicantsDisplay = "";
 
     //Convert each decimal value in this.mintermsDecimal into a Minterm object and push it to this.mintermList
-    for(let i = 0; i < this.mintermsDecimal.length; i++){
+    for (let i = 0; i < this.mintermsDecimal.length; i++) {
       let decimalValue = this.mintermsDecimal[i];
       let MintermObject = new Minterm(decimalValue, this.numberOfVariables);
       this.mintermList.push(MintermObject);
@@ -42,10 +42,20 @@ export default class QuineMcCluskeyAlgorithm {
   // TODO: Given the original minterms array, compute and return all integers in range [0, 2^n)
   //       that are NOT in the minterms list — these are the maxterms (complement)
   generateComplement(minterms) {
-    // TODO: Calculate totalPossibleMinterms = 2 ** this.numberOfVariables
-    // TODO: Loop from 0 to totalPossibleMinterms - 1
-    //       and collect any index not present in minterms
-    // TODO: Return the complement array
+
+    // Convert input minterms array to a Set for fast lookup
+    const mintermSet = new Set(this.mintermsDecimal)
+
+    let complementInput = [];
+
+    // Collect all values from 0 to 2^n - 1 that are NOT in the minterm set (these are maxterms)
+    for (let i = 0; i < (2 ** this.numberOfVariables) - 1; i++) {
+      if (!mintermSet.has(i)) {
+        complementInput.push(i);
+      }
+    }
+    // Return the maxterms (complement of the given minterms)
+    return complementInput;
   }
 
   solve() {
