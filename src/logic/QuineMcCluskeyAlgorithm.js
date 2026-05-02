@@ -78,18 +78,82 @@ export default class QuineMcCluskeyAlgorithm {
   }
 
   findPrimeImplicants(groups) {
-    // TODO: Set currentGroups = groups and push a deep copy as the first entry in this.simplification
-    // TODO: Loop until no new combinations are found:
-    //   a) Create newGroups array
-    //   b) Track which terms were combined this iteration (combinedTerms Set)
-    //   c) For each adjacent pair of groups (i, i+1), try to combine every pair of minterms
-    //      using minterm1.combineMinterms(minterm2)
-    //   d) If a combination succeeds, mark both source minterms as combined and add
-    //      the new combined term to newGroups (avoiding exact duplicates)
-    //   e) Any term in currentGroups that was NOT combined becomes a prime implicant
-    //   f) If no combinations were found at all, break the loop
-    //   g) Set currentGroups = newGroups and push a deep copy into this.simplification
-    // TODO: Remove duplicate prime implicants (compare by binary representation)
+    // Set currentGroups to the initial groups and create a shallow copy of each group array
+    let currentGroups = groups.map(group => [...group]);
+
+    // Push a deep copy of the initial groups as the first entry in simplification
+    this.simplification.push(currentGroups.map(group => [...group]));
+
+    while (true) {
+      // Create newGroups with the same number of sub-arrays as currentGroups, each starting empty
+      let newGroups = Array.from({ length: currentGroups.length }, () => []);
+
+      // Track which minterms were successfully combined this iteration
+      let combinedTerms = new Set();
+
+      // Flag to detect if at least one combination occurred this iteration
+      let anyCombined = false;
+
+      // Iterate over each adjacent pair of groups (group i and group i+1)
+      for (let i = 0; i < currentGroups.length - 1; i++) {
+
+        // Iterate over each minterm in the current group i
+        for (let j = 0; j < currentGroups[i].length; j++) {
+
+          // Iterate over each minterm in the next group i+1
+          for (let k = 0; k < currentGroups[i + 1].length; k++) {
+
+            // Attempt to combine the minterm from group i with the minterm from group i+1
+            let result = currentGroups[i][j].combineMinterms(currentGroups[i + 1][k]);
+
+            if (result.success) {
+              // Mark both source minterms as combined so they are not added as prime implicants
+              combinedTerms.add(currentGroups[i][j]);
+              combinedTerms.add(currentGroups[i + 1][k]);
+
+              // Set the flag to indicate at least one combination happened this iteration
+              anyCombined = true;
+
+              // Check if an identical combined term (same binary representation) already exists in newGroups[i]
+              let alreadyExists = newGroups[i].some(
+                existing => existing.equals(result.minterm)
+              );
+
+              // Only add the combined term if it is not already present (avoid duplicates)
+              if (!alreadyExists) {
+                newGroups[i].push(result.minterm);
+              }
+            }
+          }
+        }
+      }
+
+      // If no combinations were found this iteration, all remaining terms are already prime implicants — exit the loop
+      if (!anyCombined) break;
+
+      // Any minterm in currentGroups that was never combined is a prime implicant — collect them
+      for (let i = 0; i < currentGroups.length; i++) {
+        for (let j = 0; j < currentGroups[i].length; j++) {
+
+          // If this minterm was not marked as combined, it cannot be simplified further
+          if (!combinedTerms.has(currentGroups[i][j])) {
+            this.primeImplicants.push(currentGroups[i][j]);
+          }
+        }
+      }
+
+      // Advance to the next iteration using the newly combined terms
+      currentGroups = newGroups;
+
+      // Push a deep copy of the new groups into simplification to record this iteration
+      this.simplification.push(currentGroups.map(group => [...group]));
+    }
+
+    // Remove duplicate prime implicants by keeping only the first occurrence of each unique binary representation
+    this.primeImplicants = this.primeImplicants.filter(
+      (pi, index, self) =>
+        index === self.findIndex(other => other.equals(pi))
+    );
   }
 
   createPrimeImplicantTable() {
