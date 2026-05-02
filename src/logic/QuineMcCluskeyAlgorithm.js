@@ -174,16 +174,30 @@ export default class QuineMcCluskeyAlgorithm {
     // TODO: Spread pi.getSetOfMinterms() into an array for minterms
   }
 
-  // TODO: Convert a Minterm's binary representation into a POS (sum) clause string.
-  //   - Wrap result in parentheses: e.g. "(A + B')"
-  //   - For each bit position that is NOT '-':
-  //     * If the bit is '0', write the variable name as-is (uncomplemented in POS)
-  //     * If the bit is '1', write the variable name with a prime (complemented): e.g. "A'"
-  //   - Separate literals with " + "
   mintermToPOSExpression(minterm) {
-    // TODO: Get the binary representation from minterm.getBinaryRepresentation()
-    // TODO: Iterate over each character in the binary string
-    // TODO: Build and return the expression string following the POS rules above
+    // Get the binary representation string from the minterm object
+    let binaryRepresentation = minterm.getBinaryRepresentation();
+
+    // Array to collect each literal before joining
+    let literals = [];
+
+    for (let i = 0; i < binaryRepresentation.length; i++) {
+      // If the bit is '0', variable is uncomplemented in POS (e.g. "A")
+      if (binaryRepresentation[i] === '0') {
+        literals.push(this.variablesLetter[i]);
+      }
+      // If the bit is '1', variable is complemented in POS (e.g. "A'")
+      else if (binaryRepresentation[i] === '1') {
+        literals.push(this.variablesLetter[i] + "'");
+      }
+      // If the bit is '-', this variable was eliminated during combining — skip it
+      else if (binaryRepresentation[i] === '-') {
+        continue;
+      }
+    }
+
+    // Join all literals with " + " and wrap in parentheses to form the POS clause
+    return "(" + literals.join(" + ") + ")";
   }
 
   findEssentialPrimeImplicants() {
