@@ -60,9 +60,13 @@ export default class QuineMcCluskeyAlgorithm {
 
   solve() {
     // TODO: Step 1 — Call groupByOnes() to group minterms by their number of 1-bits
+    let groups = this.groupByOnes();
     // TODO: Step 2 — Call findPrimeImplicants(groups) to iteratively combine groups
+    this.findPrimeImplicants(groups);
     // TODO: Step 3 — Call createPrimeImplicantTable() to build the coverage table
+    this.createPrimeImplicantTable();
     // TODO: Step 4 — Call findEssentialPrimeImplicants() to select the minimal cover
+    this.findEssentialPrimeImplicants();
   }
 
   groupByOnes() {
