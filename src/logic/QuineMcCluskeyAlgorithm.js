@@ -59,13 +59,13 @@ export default class QuineMcCluskeyAlgorithm {
   }
 
   solve() {
-    // TODO: Step 1 — Call groupByOnes() to group minterms by their number of 1-bits
+    // Call groupByOnes() to group minterms by their number of 1-bits
     let groups = this.groupByOnes();
-    // TODO: Step 2 — Call findPrimeImplicants(groups) to iteratively combine groups
+    // Call findPrimeImplicants(groups) to iteratively combine groups
     this.findPrimeImplicants(groups);
-    // TODO: Step 3 — Call createPrimeImplicantTable() to build the coverage table
+    // Call createPrimeImplicantTable() to build the coverage table
     this.createPrimeImplicantTable();
-    // TODO: Step 4 — Call findEssentialPrimeImplicants() to select the minimal cover
+    // Call findEssentialPrimeImplicants() to select the minimal cover
     this.findEssentialPrimeImplicants();
   }
 
@@ -247,18 +247,69 @@ export default class QuineMcCluskeyAlgorithm {
   }
 
   findEssentialPrimeImplicants() {
-    // TODO: Build a coverageMap: Map<maxterm, PrimeImplicant[]>
-    //       mapping each maxterm to the list of prime implicants that cover it
-    // TODO: Find essential prime implicants (EPIs) — maxterms covered by exactly one PI
-    //       Add each such PI to this.essentialPrimeImplicants (avoid duplicates)
-    //       Track all maxterms covered by EPIs in a coveredMinterms Set
-    // TODO: For any uncovered maxterms remaining:
-    //       Greedily select the PI that covers the most uncovered maxterms
-    //       Repeat until all maxterms are covered
-    // TODO: Build this.essentialPrimeImplicantsDisplay string showing:
-    //       - All EPIs found
-    //       - Any additional PIs added to cover remaining maxterms
-    //       - Final list of selected prime implicants
+    // Build a coverageMap: Map<maxterm, PrimeImplicant[]> 
+    // mapping each maxterm to the list of prime implicants that cover it
+    let coverageMap = new Map();
+    for (let PI of this.primeImplicants) {
+      for (let term of PI.getSetOfMinterms()) {
+        if (!coverageMap.has(term)) coverageMap.set(term, []);
+        coverageMap.get(term).push(PI);
+      }
+    }
+    // Find essential prime implicants (EPIs) — maxterms covered by exactly one PI
+    // Add each such PI to this.essentialPrimeImplicants (avoid duplicates)
+    // Track all maxterms covered by EPIs in a coveredMinterms Set
+    let coveredMinterms = new Set();
+    let selectedPIs = new Set();
+    this.essentialPrimeImplicants = [];
+    for (let [term, PIsAtTerm] of coverageMap.entries()) {
+      if (PIsAtTerm.length === 1) {
+        let epi = PIsAtTerm[0];
+        if (!selectedPIs.has(epi)) {
+          selectedPIs.add(epi);
+          this.essentialPrimeImplicants.push(epi);
+          for (let t of epi.getSetOfMinterms()) {
+            coveredMinterms.add(t);
+          }
+        }
+      }
+    }
+
+    // For any uncovered maxterms remaining:
+    // Greedily select the PI that covers the most uncovered maxterms
+    // Repeat until all maxterms are covered
+    while (coveredMinterms.size < this.mintermsDecimal.length) {
+      let bestPI = null;
+      let maxCoveredCount = 0;
+      for (let PI of this.primeImplicants) {
+        let coveredCount = 0;
+        for (let term of PI.getSetOfMinterms()) {
+          if (!coveredMinterms.has(term)) coveredCount++;
+        }
+        if (coveredCount > maxCoveredCount) {
+          maxCoveredCount = coveredCount;
+          bestPI = PI;
+        }
+      }
+      if (!bestPI) break;
+      this.essentialPrimeImplicants.push(bestPI);
+      for (let term of bestPI.getSetOfMinterms()) {
+        coveredMinterms.add(term);
+      }
+    }
+    // Build this.essentialPrimeImplicantsDisplay string showing:
+    // - All EPIs found
+    // - Any additional PIs added to cover remaining maxterms
+    // - Final list of selected prime implicants
+    let display = "--- Prime Implicant Selection ---\n";
+    display += "Selected Implicants (EPIs + Greedy Covers):\n";
+    for (let PI of this.essentialPrimeImplicants) {
+      display += ` - ${PI.toString()}\n`;
+    }
+    display += `\nTotal Prime Implicants selected: ${this.essentialPrimeImplicants.length}\n`;
+    display += `All ${coveredMinterms.size} minterms are covered.`;
+
+    this.essentialPrimeImplicantsDisplay = display;
   }
 
   displayGroupedMinterms() {
