@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import './App.css';
 
 function App() {
   const [minterms, setMinterms] = useState('');
@@ -54,49 +53,51 @@ function App() {
   };
 
   return (
-    <div className="app">
-      <h1>Quine-McCluskey Minimizer</h1>
+    <div className="app-container">
+      <h1 className="animate-fade-in">Quine-McCluskey Minimizer</h1>
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="minterms">Minterms (comma-separated):</label>
-          <br />
-          <input
-            id="minterms"
-            type="text"
-            value={minterms}
-            onChange={(e) => setMinterms(e.target.value)}
-            placeholder="e.g. 0,1,2,5,6,7"
-          />
-        </div>
+      <div className="card animate-fade-in stagger-1">
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="minterms">Minterms (comma-separated)</label>
+            <input
+              id="minterms"
+              type="text"
+              value={minterms}
+              onChange={(e) => setMinterms(e.target.value)}
+              placeholder="e.g. 0, 1, 2, 5, 6, 7"
+              className="hover-lift"
+            />
+          </div>
 
-        <div>
-          <label htmlFor="variables">Variables (letters only, max 6):</label>
-          <br />
-          <input
-            id="variables"
-            type="text"
-            value={variables}
-            onChange={(e) => setVariables(e.target.value.toUpperCase())}
-            maxLength={6}
-            placeholder="e.g. ABCD"
-          />
-        </div>
+          <div className="form-group">
+            <label htmlFor="variables">Variables (A-Z, max 6)</label>
+            <input
+              id="variables"
+              type="text"
+              value={variables}
+              onChange={(e) => setVariables(e.target.value.toUpperCase())}
+              maxLength={6}
+              placeholder="e.g. ABCD"
+              className="hover-lift"
+            />
+          </div>
 
-        <div>
-          <button type="submit">Minimize</button>
-          <button type="button" onClick={handleClear}>Clear</button>
-        </div>
-      </form>
+          <div className="button-group">
+            <button type="submit" className="hover-lift">Minimize Logic</button>
+            <button type="button" onClick={handleClear} className="hover-lift">Clear All</button>
+          </div>
+        </form>
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+        {error && <div className="error-message animate-slide-in">{error}</div>}
 
-      {output && (
-        <div>
-          <h2>Output</h2>
-          <pre>{output}</pre>
-        </div>
-      )}
+        {output && (
+          <div className="output-section animate-fade-in stagger-2">
+            <h2>Optimization Results</h2>
+            <pre>{output}</pre>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

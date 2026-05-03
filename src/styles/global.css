@@ -1,0 +1,164 @@
+:root {
+  --primary: hsl(230, 85%, 60%);
+  --primary-hover: hsl(230, 85%, 65%);
+  --bg: hsl(220, 20%, 10%);
+  --surface: hsl(220, 20%, 15%);
+  --surface-hover: hsl(220, 20%, 18%);
+  --text: hsl(0, 0%, 95%);
+  --text-muted: hsl(220, 10%, 70%);
+  --border: hsl(220, 20%, 25%);
+  --accent: hsl(280, 80%, 65%);
+  --success: hsl(150, 80%, 45%);
+  --error: hsl(0, 80%, 60%);
+  --glass: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.08);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  background: radial-gradient(circle at top right, hsla(230, 85%, 60%, 0.1), transparent),
+              radial-gradient(circle at bottom left, hsla(280, 80%, 65%, 0.1), transparent);
+}
+
+h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 2rem;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.02em;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 1.5rem;
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 800px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(12px);
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+input {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 0.875rem 1rem;
+  color: var(--text);
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px hsla(230, 85%, 60%, 0.15);
+}
+
+.button-group {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+button {
+  flex: 1;
+  padding: 0.875rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+}
+
+button[type="submit"] {
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+  color: white;
+  box-shadow: 0 4px 12px hsla(230, 85%, 60%, 0.3);
+}
+
+button[type="submit"]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px hsla(230, 85%, 60%, 0.4);
+}
+
+button[type="button"] {
+  background: var(--surface-hover);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+button[type="button"]:hover {
+  background: var(--border);
+}
+
+.error-message {
+  color: var(--error);
+  background: hsla(0, 80%, 60%, 0.1);
+  padding: 1rem;
+  border-radius: 0.75rem;
+  margin-top: 1.5rem;
+  border: 1px solid hsla(0, 80%, 60%, 0.2);
+  font-weight: 500;
+}
+
+.output-section {
+  margin-top: 2.5rem;
+  width: 100%;
+}
+
+.output-section h2 {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  color: var(--text);
+}
+
+pre {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  overflow-x: auto;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
