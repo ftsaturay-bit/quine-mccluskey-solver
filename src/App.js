@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import InfiniteGrid from './components/TheInfiniteGrid';
 import StarBorder from './components/StarBorder';
 import GroupMintermsViz from './components/GroupMintermsViz';
@@ -206,15 +206,28 @@ function App() {
                 <FormattedTextViz content={results.epi} />
               </StepCard>
 
-              <div className="relative group">
+              {/* STEP 5: Final Expression */}
+              <div className="relative group mt-8">
                 <StarBorder color="#f97316" speed="2.5s" thickness={6} className="w-full">
-                  <div className="flex flex-col items-center">
-                    <div className="flex items-center gap-6 mb-6">
-                      <span className="text-6xl font-black text-orange-500/20 tabular-nums">05</span>
-                      <h3 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tight">Final Expression</h3>
+                  <div className="flex flex-col items-center py-2">
+                    <div className="flex items-center gap-6 mb-8">
+                      <div className="relative">
+                        <span className="text-6xl font-black text-orange-500/10 tabular-nums">05</span>
+                      </div>
+                      <div className="flex flex-col">
+                        <h3 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tighter leading-none">
+                          Final Expression
+                        </h3>
+                        <p className="text-[9px] uppercase tracking-[0.4em] font-bold text-slate-500 mt-1.5">Minimized POS Expression</p>
+                      </div>
                     </div>
-                    <div className="bg-orange-500/10 border border-orange-500/20 rounded-2xl p-8 text-center w-full">
-                      <p className="text-3xl md:text-4xl lg:text-5xl font-mono font-bold text-orange-400 break-words">
+                    
+                    <div className="relative w-full bg-slate-950/80 backdrop-blur-xl border border-orange-500/20 rounded-[1.5rem] p-6 md:p-10 text-center shadow-[0_0_30px_rgba(249,115,22,0.1)]">
+                      {/* Background Accents */}
+                      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/4 h-px bg-gradient-to-r from-transparent via-orange-500/40 to-transparent"></div>
+                      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/4 h-px bg-gradient-to-r from-transparent via-orange-500/40 to-transparent"></div>
+                      
+                      <p className="text-xl md:text-3xl font-mono font-black text-orange-400 break-words tracking-tight">
                         {results.final.replace("Final POS Expression: ", "")}
                       </p>
                     </div>

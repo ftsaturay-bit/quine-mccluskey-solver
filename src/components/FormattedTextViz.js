@@ -85,9 +85,9 @@ export default function FormattedTextViz({ content }) {
     <div className="flex flex-col px-4 max-w-5xl mx-auto pb-6">
       {/* Process Steps */}
       {sections.map((section, idx) => (
-        <StepRow 
-          key={idx} 
-          id={section.id} 
+        <StepRow
+          key={idx}
+          id={section.id}
           title={section.title}
           items={section.items}
           isMinterms={section.title.toLowerCase().includes('minterms')}
@@ -100,7 +100,7 @@ export default function FormattedTextViz({ content }) {
           {/* Background Glow Decor */}
           <div className="absolute -right-12 -top-12 w-48 h-48 bg-orange-500/20 rounded-full blur-3xl"></div>
           <div className="absolute -left-12 -bottom-12 w-48 h-48 bg-orange-500/10 rounded-full blur-3xl"></div>
-          
+
           <div className="relative flex flex-col gap-1">
             {globalSummary.map((text, i) => (
               <p key={i} className="text-lg md:text-2xl font-black text-white uppercase tracking-tight">
