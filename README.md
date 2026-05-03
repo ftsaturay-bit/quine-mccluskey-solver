@@ -15,7 +15,7 @@ Then open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## What You Need to Implement
+## What We Implemented
 
 ### Inputs
 
@@ -26,7 +26,7 @@ Then open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ### Output
 
-The app should display all intermediate steps and the final minimized POS expression in a `<pre>` block.
+The app should then display all intermediate steps and the final minimized POS expression in a `<pre>` block.
 
 ---
 
