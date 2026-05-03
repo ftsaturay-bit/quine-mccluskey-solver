@@ -264,7 +264,7 @@ export default class QuineMcCluskeyAlgorithm {
     let coveredMinterms = new Set();
     let selectedPIs = new Set();
     let epis = [];
-    
+
     // 1. Find True Essential Prime Implicants (EPIs)
     for (let [term, PIsAtTerm] of coverageMap.entries()) {
       if (PIsAtTerm.length === 1) {
@@ -310,8 +310,8 @@ export default class QuineMcCluskeyAlgorithm {
     this.essentialPrimeImplicants = [...epis, ...additionalPIs];
 
     // 4. Build the structured display string
-    let display = "--- Step 4: Essential Prime Implicants ---\n\n";
-    
+    let display = "";
+
     display += "1. Essential Prime Implicants:\n";
     if (epis.length === 0) display += "   (None)\n";
     else epis.forEach(pi => display += `   - ${this.mintermToPOSExpression(pi)} | ${pi.toString()}\n`);
@@ -344,8 +344,6 @@ export default class QuineMcCluskeyAlgorithm {
 
     // Get the first iteration groups from simplification (the initial grouping)
     let initialGroups = this.simplification[0];
-
-    display += "Grouped Minterms:\n";
 
     // Loop through each group (group 0 = zero 1-bits, group 1 = one 1-bit, etc.)
     for (let i = 0; i < initialGroups.length; i++) {
@@ -405,7 +403,7 @@ export default class QuineMcCluskeyAlgorithm {
     }
 
     // After all iterations, list all prime implicants
-    display += "Prime Implicants:\n";
+    display += "";
 
     for (let pi of this.primeImplicants) {
       // Show the POS expression, binary representation, and maxterms it covers

@@ -4,7 +4,8 @@ import InfiniteGrid from './components/TheInfiniteGrid';
 function App() {
   const [minterms, setMinterms] = useState('');
   const [variables, setVariables] = useState('');
-  const [output, setOutput] = useState('');
+  const [output, setOutput] = useState(false);
+  const [results, setResults] = useState(null);
   const [error, setError] = useState('');
 
   const handleSubmit = (e) => {
@@ -33,13 +34,14 @@ function App() {
       const mintermArray = minterms.split(',').map(s => parseInt(s.trim(), 10));
       const qm = new QMC(mintermArray, variables.toUpperCase());
       qm.solve();
-      const result =
-        qm.displayGroupedMinterms() + '\n' +
-        qm.displayCombiningTerms() + '\n' +
-        qm.displayPrimeImplicantsTable() + '\n' +
-        qm.displayEssentialPrimeImplicantsTable() + '\n' +
-        qm.getPOS();
-      setOutput(result);
+      setResults({
+        grouped: qm.displayGroupedMinterms(),
+        pi: qm.displayCombiningTerms(),
+        table: qm.displayPrimeImplicantsTable(),
+        epi: qm.displayEssentialPrimeImplicantsTable(),
+        final: qm.getPOS()
+      });
+      setOutput(true);
       // Scroll to results after render
       setTimeout(() => {
         document.getElementById('results')?.scrollIntoView({ behavior: 'smooth' });
@@ -149,20 +151,94 @@ function App() {
       </section>
 
       {/* ── RESULTS SECTION ── */}
-      {output && (
-        <section id="results" className="relative z-10 flex flex-col items-center px-4 py-24 border-t border-white/5">
-          <div className="w-full max-w-4xl space-y-4">
-            <div className="flex items-center gap-4">
-              <div className="h-px flex-1 bg-white/10"></div>
-              <h2 className="text-xs font-black text-slate-500 uppercase tracking-[0.3em]">Optimization Results</h2>
-              <div className="h-px flex-1 bg-white/10"></div>
+      {output && results && (
+        <section id="results" className="relative z-10 flex flex-col items-center px-4 py-24 border-t border-white/5 space-y-16">
+          
+          <div className="flex flex-col items-center gap-4 mb-12">
+            <h2 className="text-4xl md:text-5xl font-black text-white uppercase tracking-tighter text-center">Optimization Journey</h2>
+            <div className="h-1 w-24 bg-blue-500 rounded-full"></div>
+          </div>
+
+          <div className="w-full max-w-6xl flex gap-8 md:gap-16">
+            
+            {/* LEFT SIDE: VERTICAL STEPPER */}
+            <div className="hidden md:flex flex-col items-center relative pt-10">
+              {/* The Connecting Line */}
+              <div className="absolute top-10 bottom-10 w-px bg-gradient-to-b from-blue-500 via-blue-500/50 to-transparent"></div>
+              
+              <div className="flex flex-col gap-[28rem]"> {/* Manual gap adjustment to match card heights roughly */}
+                <StepIndicator num="1" />
+                <StepIndicator num="2" />
+                <StepIndicator num="3" />
+                <StepIndicator num="4" />
+                <StepIndicator num="5" />
+              </div>
             </div>
-            <pre className="w-full bg-slate-900/60 backdrop-blur-xl rounded-2xl p-6 overflow-x-auto text-blue-400 font-mono text-sm leading-relaxed border border-white/5 shadow-2xl">
-              {output}
-            </pre>
+
+            {/* RIGHT SIDE: THE CARDS */}
+            <div className="flex-1 space-y-16">
+              
+              {/* STEP 1: Group Minterms */}
+              <StepCard index="01" title="Group Minterms" content={results.grouped} />
+
+              {/* STEP 2: Prime Implicants */}
+              <StepCard index="02" title="Prime Implicants" content={results.pi} />
+
+              {/* STEP 3: Prime Implicant Table */}
+              <StepCard index="03" title="Prime Implicant Table" content={results.table} />
+
+              {/* STEP 4: Essential Prime Implicants */}
+              <StepCard index="04" title="Essential Prime Implicants" content={results.epi} />
+
+              {/* STEP 5: Final Expression */}
+              <div className="relative group">
+                <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-[2.5rem] blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+                <div className="relative bg-slate-900/80 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-8 md:p-12 shadow-2xl overflow-hidden">
+                   <div className="flex items-center gap-6 mb-8">
+                      <span className="text-6xl font-black text-blue-500/20 tabular-nums">05</span>
+                      <h3 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tight">Final Expression</h3>
+                   </div>
+                   <div className="bg-blue-500/10 border border-blue-500/20 rounded-2xl p-8 text-center">
+                      <p className="text-3xl md:text-4xl lg:text-5xl font-mono font-bold text-blue-400 break-words">
+                        {results.final.replace("Final POS Expression: ", "")}
+                      </p>
+                   </div>
+                </div>
+              </div>
+
+            </div>
           </div>
         </section>
       )}
+    </div>
+  );
+}
+
+// Helper Component for the Numbered Circles
+function StepIndicator({ num }) {
+  return (
+    <div className="relative flex flex-col items-center">
+      <div className="w-10 h-10 rounded-full bg-blue-600 border-4 border-slate-950 flex items-center justify-center z-10 shadow-[0_0_20px_rgba(37,99,235,0.5)]">
+        <span className="text-sm font-black text-white">{num}</span>
+      </div>
+    </div>
+  );
+}
+
+// Helper Component for Steps
+function StepCard({ index, title, content }) {
+  return (
+    <div className="relative group">
+      <div className="absolute -inset-0.5 bg-white/5 rounded-[2.5rem] transition duration-500"></div>
+      <div className="relative bg-slate-900/40 backdrop-blur-2xl border border-white/5 rounded-[2.5rem] p-8 md:p-10 shadow-xl">
+        <div className="flex items-center gap-6 mb-8">
+          <span className="text-5xl font-black text-slate-700 tabular-nums">{index}</span>
+          <h3 className="text-xl md:text-2xl font-black text-slate-300 uppercase tracking-widest">{title}</h3>
+        </div>
+        <pre className="w-full bg-black/40 rounded-2xl p-6 overflow-x-auto text-blue-300/80 font-mono text-sm leading-relaxed border border-white/5">
+          {content}
+        </pre>
+      </div>
     </div>
   );
 }
