@@ -3,8 +3,8 @@ import Minterm from './Minterm';
 export default class QuineMcCluskeyAlgorithm {
 
   constructor(mintermsDecimal, variablesLetter) {
-    //Store the original list of minterms (mintermsDecimal) and the variable letters (variablesLetter)
-    this.mintermsDecimal = mintermsDecimal;
+    // Store the original list of minterms (mintermsDecimal) and the variable letters (variablesLetter)
+    this.originalMinterms = [...mintermsDecimal];
     this.variablesLetter = variablesLetter;
 
     //Get the number Of Variables 
@@ -44,12 +44,12 @@ export default class QuineMcCluskeyAlgorithm {
   generateComplement(minterms) {
 
     // Convert input minterms array to a Set for fast lookup
-    const mintermSet = new Set(this.mintermsDecimal)
+    const mintermSet = new Set(minterms)
 
     let complementInput = [];
 
     // Collect all values from 0 to 2^n - 1 that are NOT in the minterm set (these are maxterms)
-    for (let i = 0; i < (2 ** this.numberOfVariables) - 1; i++) {
+    for (let i = 0; i < (2 ** this.numberOfVariables); i++) {
       if (!mintermSet.has(i)) {
         complementInput.push(i);
       }
@@ -132,14 +132,20 @@ export default class QuineMcCluskeyAlgorithm {
         }
       }
 
-      // If no combinations were found this iteration, all remaining terms are already prime implicants — exit the loop
-      if (!anyCombined) break;
+      // If no combinations were found this iteration, all remaining terms in currentGroups
+      // are prime implicants because they couldn't be simplified further.
+      if (!anyCombined) {
+        for (let i = 0; i < currentGroups.length; i++) {
+          for (let j = 0; j < currentGroups[i].length; j++) {
+            this.primeImplicants.push(currentGroups[i][j]);
+          }
+        }
+        break;
+      }
 
-      // Any minterm in currentGroups that was never combined is a prime implicant — collect them
+      // Otherwise, any minterm in currentGroups that was NOT combined is a prime implicant
       for (let i = 0; i < currentGroups.length; i++) {
         for (let j = 0; j < currentGroups[i].length; j++) {
-
-          // If this minterm was not marked as combined, it cannot be simplified further
           if (!combinedTerms.has(currentGroups[i][j])) {
             this.primeImplicants.push(currentGroups[i][j]);
           }
@@ -247,8 +253,6 @@ export default class QuineMcCluskeyAlgorithm {
   }
 
   findEssentialPrimeImplicants() {
-    // Build a coverageMap: Map<maxterm, PrimeImplicant[]> 
-    // mapping each maxterm to the list of prime implicants that cover it
     let coverageMap = new Map();
     for (let PI of this.primeImplicants) {
       for (let term of PI.getSetOfMinterms()) {
@@ -256,18 +260,18 @@ export default class QuineMcCluskeyAlgorithm {
         coverageMap.get(term).push(PI);
       }
     }
-    // Find essential prime implicants (EPIs) — maxterms covered by exactly one PI
-    // Add each such PI to this.essentialPrimeImplicants (avoid duplicates)
-    // Track all maxterms covered by EPIs in a coveredMinterms Set
+
     let coveredMinterms = new Set();
     let selectedPIs = new Set();
-    this.essentialPrimeImplicants = [];
+    let epis = [];
+    
+    // 1. Find True Essential Prime Implicants (EPIs)
     for (let [term, PIsAtTerm] of coverageMap.entries()) {
       if (PIsAtTerm.length === 1) {
         let epi = PIsAtTerm[0];
         if (!selectedPIs.has(epi)) {
           selectedPIs.add(epi);
-          this.essentialPrimeImplicants.push(epi);
+          epis.push(epi);
           for (let t of epi.getSetOfMinterms()) {
             coveredMinterms.add(t);
           }
@@ -275,13 +279,16 @@ export default class QuineMcCluskeyAlgorithm {
       }
     }
 
-    // For any uncovered maxterms remaining:
-    // Greedily select the PI that covers the most uncovered maxterms
-    // Repeat until all maxterms are covered
+    // 2. Identify Minterms still uncovered after EPIs
+    let initiallyUncovered = this.mintermsDecimal.filter(m => !coveredMinterms.has(m));
+    let additionalPIs = [];
+
+    // 3. Greedily select Additional PIs to cover remaining terms
     while (coveredMinterms.size < this.mintermsDecimal.length) {
       let bestPI = null;
       let maxCoveredCount = 0;
       for (let PI of this.primeImplicants) {
+        if (selectedPIs.has(PI)) continue;
         let coveredCount = 0;
         for (let term of PI.getSetOfMinterms()) {
           if (!coveredMinterms.has(term)) coveredCount++;
@@ -292,21 +299,34 @@ export default class QuineMcCluskeyAlgorithm {
         }
       }
       if (!bestPI) break;
-      this.essentialPrimeImplicants.push(bestPI);
+      selectedPIs.add(bestPI);
+      additionalPIs.push(bestPI);
       for (let term of bestPI.getSetOfMinterms()) {
         coveredMinterms.add(term);
       }
     }
-    // Build this.essentialPrimeImplicantsDisplay string showing:
-    // - All EPIs found
-    // - Any additional PIs added to cover remaining maxterms
-    // - Final list of selected prime implicants
-    let display = "--- Prime Implicant Selection ---\n";
-    display += "Selected Implicants (EPIs + Greedy Covers):\n";
-    for (let PI of this.essentialPrimeImplicants) {
-      display += ` - ${PI.toString()}\n`;
-    }
-    display += `\nTotal Prime Implicants selected: ${this.essentialPrimeImplicants.length}\n`;
+
+    // Store the final selected set
+    this.essentialPrimeImplicants = [...epis, ...additionalPIs];
+
+    // 4. Build the structured display string
+    let display = "--- Step 4: Essential Prime Implicants ---\n\n";
+    
+    display += "1. Essential Prime Implicants:\n";
+    if (epis.length === 0) display += "   (None)\n";
+    else epis.forEach(pi => display += `   - ${this.mintermToPOSExpression(pi)} | ${pi.toString()}\n`);
+
+    display += "\n2. Uncovered Minterms (after EPIs):\n";
+    display += `   ${initiallyUncovered.length > 0 ? initiallyUncovered.join(", ") : "(All covered by EPIs)"}\n`;
+
+    display += "\n3. Additional Prime Implicants (Greedy Selection):\n";
+    if (additionalPIs.length === 0) display += "   (None)\n";
+    else additionalPIs.forEach(pi => display += `   - ${this.mintermToPOSExpression(pi)} | ${pi.toString()}\n`);
+
+    display += "\n4. Final Prime Implicants (Complete Cover):\n";
+    this.essentialPrimeImplicants.forEach(pi => display += `   - ${this.mintermToPOSExpression(pi)}\n`);
+
+    display += `\nTotal selected: ${this.essentialPrimeImplicants.length}\n`;
     display += `All ${coveredMinterms.size} minterms are covered.`;
 
     this.essentialPrimeImplicantsDisplay = display;
@@ -317,7 +337,7 @@ export default class QuineMcCluskeyAlgorithm {
     let display = "";
 
     // Show the original minterms that were passed in by the user
-    display += `Original Minterms: ${this.mintermsDecimal}\n`;
+    display += `Original Minterms: ${this.originalMinterms}\n`;
 
     // Show the complement (maxterms) being used for POS simplification
     display += `Complement (Maxterms) Used: ${this.mintermsDecimal}\n\n`;
@@ -384,8 +404,8 @@ export default class QuineMcCluskeyAlgorithm {
       display += "\n";
     }
 
-    // After all iterations, list all final prime implicants
-    display += "Final Prime Implicants:\n";
+    // After all iterations, list all prime implicants
+    display += "Prime Implicants:\n";
 
     for (let pi of this.primeImplicants) {
       // Show the POS expression, binary representation, and maxterms it covers
@@ -412,8 +432,11 @@ export default class QuineMcCluskeyAlgorithm {
   }
 
   getPOS() {
-    // TODO: If essentialPrimeImplicants is empty, return a "no solution" message
-    // TODO: Otherwise, join each EPI's POS expression with " · " (product/AND symbol)
-    //       and return the full POS expression string
+    if (this.essentialPrimeImplicants.length === 0) {
+      return "Final POS Expression: No solution found (all minterms covered or no maxterms to simplify).";
+    }
+
+    const posParts = this.essentialPrimeImplicants.map(pi => this.mintermToPOSExpression(pi));
+    return "Final POS Expression: " + posParts.join(" · ");
   }
 }
