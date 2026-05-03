@@ -4,6 +4,7 @@ import StarBorder from './components/StarBorder';
 import GroupMintermsViz from './components/GroupMintermsViz';
 import SimplificationViz from './components/SimplificationViz';
 import PITableViz from './components/PITableViz';
+import FormattedTextViz from './components/FormattedTextViz';
 
 function App() {
   const [minterms, setMinterms] = useState('');
@@ -201,17 +202,19 @@ function App() {
               </StepCard>
 
               {/* STEP 4: Essential Prime Implicants */}
-              <StepCard index="04" title="Essential Prime Implicants" content={results.epi} />
+              <StepCard index="04" title="Essential Prime Implicants">
+                <FormattedTextViz content={results.epi} />
+              </StepCard>
 
               <div className="relative group">
-                <StarBorder color="cyan" speed="2.5s" thickness={6} className="w-full">
+                <StarBorder color="#f97316" speed="2.5s" thickness={6} className="w-full">
                   <div className="flex flex-col items-center">
                     <div className="flex items-center gap-6 mb-6">
-                      <span className="text-6xl font-black text-blue-500/20 tabular-nums">05</span>
+                      <span className="text-6xl font-black text-orange-500/20 tabular-nums">05</span>
                       <h3 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tight">Final Expression</h3>
                     </div>
-                    <div className="bg-blue-500/10 border border-blue-500/20 rounded-2xl p-8 text-center w-full">
-                      <p className="text-3xl md:text-4xl lg:text-5xl font-mono font-bold text-blue-400 break-words">
+                    <div className="bg-orange-500/10 border border-orange-500/20 rounded-2xl p-8 text-center w-full">
+                      <p className="text-3xl md:text-4xl lg:text-5xl font-mono font-bold text-orange-400 break-words">
                         {results.final.replace("Final POS Expression: ", "")}
                       </p>
                     </div>
