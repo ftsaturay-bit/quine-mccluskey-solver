@@ -397,7 +397,7 @@ export default class QuineMcCluskeyAlgorithm {
           ones: i,
           terms: iterGroups[i].map(t => ({
             binary: t.getBinaryRepresentation(),
-            covers: t.getValues(),
+            covers: Array.from(t.getSetOfMinterms()),
             isCombined: t.isCombined
           }))
         });
@@ -409,8 +409,8 @@ export default class QuineMcCluskeyAlgorithm {
       iterations,
       primeImplicants: this.primeImplicants.map(pi => ({
         binary: pi.getBinaryRepresentation(),
-        covers: pi.getValues(),
-        pos: pi.getPOS()
+        covers: Array.from(pi.getSetOfMinterms()),
+        pos: this.mintermToPOSExpression(pi)
       }))
     };
   }

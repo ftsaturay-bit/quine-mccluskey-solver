@@ -2,6 +2,7 @@ import { useState } from 'react';
 import InfiniteGrid from './components/TheInfiniteGrid';
 import StarBorder from './components/StarBorder';
 import GroupMintermsViz from './components/GroupMintermsViz';
+import SimplificationViz from './components/SimplificationViz';
 
 function App() {
   const [minterms, setMinterms] = useState('');
@@ -38,6 +39,7 @@ function App() {
       qm.solve();
       setResults({
         groupedData: qm.getGroupedMintermsData(),
+        simplificationData: qm.getSimplificationData(),
         grouped: qm.displayGroupedMinterms(),
         pi: qm.displayCombiningTerms(),
         table: qm.displayPrimeImplicantsTable(),
@@ -187,7 +189,9 @@ function App() {
               </StepCard>
 
               {/* STEP 2: Prime Implicants */}
-              <StepCard index="02" title="Prime Implicants" content={results.pi} />
+              <StepCard index="02" title="Prime Implicants">
+                <SimplificationViz data={results.simplificationData} />
+              </StepCard>
 
               {/* STEP 3: Prime Implicant Table */}
               <StepCard index="03" title="Prime Implicant Table" content={results.table} />
