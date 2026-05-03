@@ -33,13 +33,17 @@ function App() {
       const mintermArray = minterms.split(',').map(s => parseInt(s.trim(), 10));
       const qm = new QMC(mintermArray, variables.toUpperCase());
       qm.solve();
-      setOutput(
+      const result =
         qm.displayGroupedMinterms() + '\n' +
         qm.displayCombiningTerms() + '\n' +
         qm.displayPrimeImplicantsTable() + '\n' +
         qm.displayEssentialPrimeImplicantsTable() + '\n' +
-        qm.getPOS()
-      );
+        qm.getPOS();
+      setOutput(result);
+      // Scroll to results after render
+      setTimeout(() => {
+        document.getElementById('results')?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
     } catch (err) {
       setError(err.message);
     }
@@ -58,91 +62,110 @@ function App() {
   };
 
   return (
-    <div 
+    <div
       onMouseMove={handleMouseMove}
-      className="relative min-h-screen w-full font-sans text-slate-200 overflow-x-hidden"
+      className="relative w-full font-sans text-slate-200 overflow-x-hidden"
     >
-      {/* Background Component */}
+      {/* Fixed Background */}
       <div className="fixed inset-0 z-0">
         <InfiniteGrid mousePos={mousePos} />
       </div>
 
-      {/* Main Content Overlay */}
-      <main className="relative z-10 flex min-h-screen flex-col items-center justify-center p-4 md:p-8">
-        <div className="w-full max-w-4xl space-y-8">
-          <div className="text-center space-y-2">
-            <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-white uppercase italic">
-              Logic <span className="text-blue-500">Minimizer</span>
+      {/* ── HERO SECTION ── */}
+      <section className="relative z-10 flex min-h-screen flex-col items-center justify-center px-6 py-12">
+        <div className="w-full max-w-6xl flex flex-col items-center space-y-12">
+
+          {/* Top: Title and Subtitle */}
+          <div className="text-center space-y-6">
+            <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-none uppercase text-white">
+              Logic <span className="text-blue-500 italic">Minimizer</span>
             </h1>
-            <p className="text-slate-400 font-medium">Quine-McCluskey Implementation</p>
+            <p className="max-w-2xl mx-auto text-lg md:text-xl text-slate-400 leading-relaxed font-medium">
+              Simplify boolean expressions using the Quine-McCluskey tabulation method.
+              Get precise, minimized results instantly.
+            </p>
           </div>
 
-          <div className="bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-3xl p-6 md:p-10 shadow-2xl">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Minterms</label>
+          {/* Bottom: Horizontal Input Bar */}
+          <div className="w-full">
+            <div className="bg-slate-900/60 backdrop-blur-3xl border border-white/10 rounded-[2rem] p-3 md:p-4 shadow-2xl relative group">
+              <form onSubmit={handleSubmit} className="flex flex-col lg:flex-row items-stretch lg:items-center gap-3">
+
+                {/* Minterms Input */}
+                <div className="flex-1 min-w-[200px] relative">
+                  <div className="absolute left-6 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Minterms</span>
+                  </div>
                   <input
                     type="text"
                     value={minterms}
                     onChange={(e) => setMinterms(e.target.value)}
-                    placeholder="e.g. 0, 1, 2, 5, 6, 7"
-                    className="w-full bg-black/40 border border-white/5 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500/50 transition-all text-white placeholder:text-slate-700"
+                    placeholder="0, 1, 2, 5, 6, 7"
+                    className="w-full bg-black/40 border border-white/5 rounded-2xl pl-24 pr-6 py-5 focus:outline-none focus:border-blue-500/50 transition-all text-white placeholder:text-slate-800 font-medium"
                   />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Variables</label>
+
+                {/* Variables Input */}
+                <div className="flex-none lg:w-64 relative">
+                  <div className="absolute left-6 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Variables</span>
+                  </div>
                   <input
                     type="text"
                     value={variables}
                     onChange={(e) => setVariables(e.target.value.toUpperCase())}
                     maxLength={6}
-                    placeholder="e.g. ABCD"
-                    className="w-full bg-black/40 border border-white/5 rounded-2xl px-5 py-4 focus:outline-none focus:border-blue-500/50 transition-all text-white placeholder:text-slate-700"
+                    placeholder="ABCD"
+                    className="w-full bg-black/40 border border-white/5 rounded-2xl pl-28 pr-6 py-5 focus:outline-none focus:border-blue-500/50 transition-all text-white placeholder:text-slate-800 font-medium text-center"
                   />
                 </div>
-              </div>
 
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <button
-                  type="submit"
-                  className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-blue-900/20 active:scale-95"
-                >
-                  MINIMIZE LOGIC
-                </button>
-                <button
-                  type="button"
-                  onClick={handleClear}
-                  className="px-8 py-4 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-2xl transition-all active:scale-95"
-                >
-                  CLEAR
-                </button>
-              </div>
-            </form>
+                {/* Action Buttons */}
+                <div className="flex items-center gap-2">
+                  <button
+                    type="submit"
+                    className="flex-1 lg:flex-none bg-blue-600 hover:bg-blue-500 text-white font-black px-8 py-5 rounded-2xl transition-all shadow-lg shadow-blue-900/40 active:scale-95 uppercase tracking-wider text-xs whitespace-nowrap"
+                  >
+                    Minimize Logic
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleClear}
+                    className="bg-slate-800/80 hover:bg-slate-700 text-slate-300 font-black px-6 py-5 rounded-2xl transition-all active:scale-95 uppercase tracking-wider text-xs border border-white/5"
+                  >
+                    Clear
+                  </button>
+                </div>
+              </form>
+            </div>
 
             {error && (
-              <div className="mt-6 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-400 text-sm font-medium">
+              <div className="mt-4 px-6 py-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-[10px] font-black uppercase tracking-widest text-center">
                 {error}
-              </div>
-            )}
-
-            {output && (
-              <div className="mt-10 space-y-4">
-                <div className="flex items-center gap-2">
-                  <div className="h-px flex-1 bg-white/10"></div>
-                  <h2 className="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">Optimization Results</h2>
-                  <div className="h-px flex-1 bg-white/10"></div>
-                </div>
-                <pre className="w-full bg-black/60 rounded-2xl p-6 overflow-x-auto text-blue-400 font-mono text-sm leading-relaxed border border-white/5">
-                  {output}
-                </pre>
               </div>
             )}
           </div>
         </div>
-      </main>
+      </section>
+
+      {/* ── RESULTS SECTION ── */}
+      {output && (
+        <section id="results" className="relative z-10 flex flex-col items-center px-4 py-24 border-t border-white/5">
+          <div className="w-full max-w-4xl space-y-4">
+            <div className="flex items-center gap-4">
+              <div className="h-px flex-1 bg-white/10"></div>
+              <h2 className="text-xs font-black text-slate-500 uppercase tracking-[0.3em]">Optimization Results</h2>
+              <div className="h-px flex-1 bg-white/10"></div>
+            </div>
+            <pre className="w-full bg-slate-900/60 backdrop-blur-xl rounded-2xl p-6 overflow-x-auto text-blue-400 font-mono text-sm leading-relaxed border border-white/5 shadow-2xl">
+              {output}
+            </pre>
+          </div>
+        </section>
+      )}
     </div>
   );
 }
 
-export default App;
+export default App;
+
