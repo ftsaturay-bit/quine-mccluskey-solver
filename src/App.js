@@ -160,96 +160,112 @@ function App() {
 
       {/* ── RESULTS SECTION ── */}
       {output && results && (
-        <section id="results" className="relative z-10 flex flex-col items-center px-4 py-24 border-t border-white/5 space-y-16">
+        <section id="results" className="relative z-10 flex flex-col items-center px-4 py-24 border-t border-white/5 overflow-hidden">
 
-          <div className="flex flex-col items-center gap-4 mb-12">
-            <h2 className="text-4xl md:text-5xl font-black text-white uppercase tracking-tighter text-center">Optimization Journey</h2>
-            <div className="h-1 w-24 bg-blue-500 rounded-full"></div>
-          </div>
 
-          <div className="w-full max-w-6xl flex gap-8 md:gap-16">
-
-            {/* LEFT SIDE: VERTICAL STEPPER */}
-            <div className="hidden md:flex flex-col items-center relative pt-10">
-              {/* The Connecting Line */}
-              <div className="absolute top-10 bottom-10 w-px bg-gradient-to-b from-blue-500 via-blue-500/50 to-transparent"></div>
-
-              <div className="flex flex-col gap-[28rem]"> {/* Manual gap adjustment to match card heights roughly */}
-                <StepIndicator num="1" />
-                <StepIndicator num="2" />
-                <StepIndicator num="3" />
-                <StepIndicator num="4" />
-                <StepIndicator num="5" />
+          <div className="w-full max-w-6xl space-y-16">
+            
+            {/* STEP 1: Group Minterms */}
+            <div className="flex gap-8 md:gap-16 relative group/step">
+              <div className="flex flex-col items-center flex-none relative pt-8">
+                <div className="w-12 h-12 rounded-full bg-orange-600 border-4 border-slate-950 flex items-center justify-center z-10 shadow-[0_0_20px_rgba(249,115,22,0.5)] group-hover/step:scale-110 transition-transform">
+                  <span className="text-sm font-black text-white">1</span>
+                </div>
+                <div className="absolute top-20 bottom-[-64px] w-0.5 bg-gradient-to-b from-orange-500/40 via-orange-500/10 to-transparent z-0"></div>
+              </div>
+              <div className="flex-1 min-w-0">
+                <StepCard index="01" title="Group Minterms">
+                  <GroupMintermsViz data={results.groupedData} />
+                </StepCard>
               </div>
             </div>
 
-            {/* RIGHT SIDE: THE CARDS */}
-            <div className="flex-1 space-y-16">
+            {/* STEP 2: Prime Implicants */}
+            <div className="flex gap-8 md:gap-16 relative group/step">
+              <div className="flex flex-col items-center flex-none relative pt-8">
+                <div className="w-12 h-12 rounded-full bg-orange-600 border-4 border-slate-950 flex items-center justify-center z-10 shadow-[0_0_20px_rgba(249,115,22,0.5)] group-hover/step:scale-110 transition-transform">
+                  <span className="text-sm font-black text-white">2</span>
+                </div>
+                <div className="absolute top-20 bottom-[-64px] w-0.5 bg-gradient-to-b from-orange-500/40 via-orange-500/10 to-transparent z-0"></div>
+              </div>
+              <div className="flex-1 min-w-0">
+                <StepCard index="02" title="Prime Implicants">
+                  <SimplificationViz data={results.simplificationData} />
+                </StepCard>
+              </div>
+            </div>
 
-              {/* STEP 1: Group Minterms */}
-              <StepCard index="01" title="Group Minterms">
-                <GroupMintermsViz data={results.groupedData} />
-              </StepCard>
+            {/* STEP 3: Prime Implicant Table */}
+            <div className="flex gap-8 md:gap-16 relative group/step">
+              <div className="flex flex-col items-center flex-none relative pt-8">
+                <div className="w-12 h-12 rounded-full bg-orange-600 border-4 border-slate-950 flex items-center justify-center z-10 shadow-[0_0_20px_rgba(249,115,22,0.5)] group-hover/step:scale-110 transition-transform">
+                  <span className="text-sm font-black text-white">3</span>
+                </div>
+                <div className="absolute top-20 bottom-[-64px] w-0.5 bg-gradient-to-b from-orange-500/40 via-orange-500/10 to-transparent z-0"></div>
+              </div>
+              <div className="flex-1 min-w-0">
+                <StepCard index="03" title="Prime Implicant Table">
+                  <PITableViz data={results.piTableData} />
+                </StepCard>
+              </div>
+            </div>
 
-              {/* STEP 2: Prime Implicants */}
-              <StepCard index="02" title="Prime Implicants">
-                <SimplificationViz data={results.simplificationData} />
-              </StepCard>
+            {/* STEP 4: Essential Prime Implicants */}
+            <div className="flex gap-8 md:gap-16 relative group/step">
+              <div className="flex flex-col items-center flex-none relative pt-8">
+                <div className="w-12 h-12 rounded-full bg-orange-600 border-4 border-slate-950 flex items-center justify-center z-10 shadow-[0_0_20px_rgba(249,115,22,0.5)] group-hover/step:scale-110 transition-transform">
+                  <span className="text-sm font-black text-white">4</span>
+                </div>
+                <div className="absolute top-20 bottom-[-64px] w-0.5 bg-gradient-to-b from-orange-500/40 via-orange-500/10 to-transparent z-0"></div>
+              </div>
+              <div className="flex-1 min-w-0">
+                <StepCard index="04" title="Essential Prime Implicants">
+                  <FormattedTextViz content={results.epi} />
+                </StepCard>
+              </div>
+            </div>
 
-              {/* STEP 3: Prime Implicant Table */}
-              <StepCard index="03" title="Prime Implicant Table">
-                <PITableViz data={results.piTableData} />
-              </StepCard>
-
-              {/* STEP 4: Essential Prime Implicants */}
-              <StepCard index="04" title="Essential Prime Implicants">
-                <FormattedTextViz content={results.epi} />
-              </StepCard>
-
-              {/* STEP 5: Final Expression */}
-              <div className="relative group mt-8">
-                <StarBorder color="#f97316" speed="2.5s" thickness={6} className="w-full">
-                  <div className="flex flex-col items-center py-2">
-                    <div className="flex items-center gap-6 mb-8">
-                      <div className="relative">
-                        <span className="text-6xl font-black text-orange-500/10 tabular-nums">05</span>
+            {/* STEP 5: Final Expression */}
+            <div className="flex gap-8 md:gap-16 relative group/step">
+              <div className="flex flex-col items-center flex-none relative pt-8">
+                <div className="w-12 h-12 rounded-full bg-orange-600 border-4 border-slate-950 flex items-center justify-center z-10 shadow-[0_0_20px_rgba(249,115,22,0.5)] group-hover/step:scale-110 transition-transform">
+                  <span className="text-sm font-black text-white">5</span>
+                </div>
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="relative group">
+                  <StarBorder color="#f97316" speed="2.5s" thickness={6} className="w-full">
+                    <div className="flex flex-col items-center py-2">
+                      <div className="flex items-center gap-6 mb-8">
+                        <div className="relative">
+                          <span className="text-6xl font-black text-orange-500/10 tabular-nums">05</span>
+                        </div>
+                        <div className="flex flex-col">
+                          <h3 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tighter leading-none">
+                            Final Expression
+                          </h3>
+                          <p className="text-[9px] uppercase tracking-[0.4em] font-bold text-slate-500 mt-1.5">Minimized POS Expression</p>
+                        </div>
                       </div>
-                      <div className="flex flex-col">
-                        <h3 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tighter leading-none">
-                          Final Expression
-                        </h3>
-                        <p className="text-[9px] uppercase tracking-[0.4em] font-bold text-slate-500 mt-1.5">Minimized POS Expression</p>
-                      </div>
-                    </div>
-                    
-                    <div className="relative w-full bg-slate-950/80 backdrop-blur-xl border border-orange-500/20 rounded-[1.5rem] p-6 md:p-10 text-center shadow-[0_0_30px_rgba(249,115,22,0.1)]">
-                      {/* Background Accents */}
-                      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/4 h-px bg-gradient-to-r from-transparent via-orange-500/40 to-transparent"></div>
-                      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/4 h-px bg-gradient-to-r from-transparent via-orange-500/40 to-transparent"></div>
                       
-                      <p className="text-xl md:text-3xl font-mono font-black text-orange-400 break-words tracking-tight">
-                        {results.final.replace("Final POS Expression: ", "")}
-                      </p>
+                      <div className="relative w-full bg-slate-950/80 backdrop-blur-xl border border-orange-500/20 rounded-[1.5rem] p-6 md:p-10 text-center shadow-[0_0_30px_rgba(249,115,22,0.1)]">
+                        {/* Background Accents */}
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/4 h-px bg-gradient-to-r from-transparent via-orange-500/40 to-transparent"></div>
+                        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/4 h-px bg-gradient-to-r from-transparent via-orange-500/40 to-transparent"></div>
+                        
+                        <p className="text-xl md:text-3xl font-mono font-black text-orange-400 break-words tracking-tight">
+                          {results.final.replace("Final POS Expression: ", "")}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </StarBorder>
+                  </StarBorder>
+                </div>
               </div>
-
             </div>
+
           </div>
         </section>
       )}
-    </div>
-  );
-}
-
-// Helper Component for the Numbered Circles
-function StepIndicator({ num }) {
-  return (
-    <div className="relative flex flex-col items-center">
-      <div className="w-10 h-10 rounded-full bg-blue-600 border-4 border-slate-950 flex items-center justify-center z-10 shadow-[0_0_20px_rgba(37,99,235,0.5)]">
-        <span className="text-sm font-black text-white">{num}</span>
-      </div>
     </div>
   );
 }
