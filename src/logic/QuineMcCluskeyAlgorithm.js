@@ -467,6 +467,17 @@ export default class QuineMcCluskeyAlgorithm {
   }
 
 
+  getPITableData() {
+    return {
+      minterms: this.mintermsDecimal,
+      rows: this.primeImplicants.map(pi => ({
+        expression: this.mintermToPOSExpression(pi),
+        binary: pi.getBinaryRepresentation(),
+        coveredMinterms: Array.from(pi.getSetOfMinterms())
+      }))
+    };
+  }
+
   displayPrimeImplicantsTable() {
     // Return the text table built by createPrimeImplicantTable()
     return this.primeImplicantTableDisplay;

@@ -3,6 +3,7 @@ import InfiniteGrid from './components/TheInfiniteGrid';
 import StarBorder from './components/StarBorder';
 import GroupMintermsViz from './components/GroupMintermsViz';
 import SimplificationViz from './components/SimplificationViz';
+import PITableViz from './components/PITableViz';
 
 function App() {
   const [minterms, setMinterms] = useState('');
@@ -40,6 +41,7 @@ function App() {
       setResults({
         groupedData: qm.getGroupedMintermsData(),
         simplificationData: qm.getSimplificationData(),
+        piTableData: qm.getPITableData(),
         grouped: qm.displayGroupedMinterms(),
         pi: qm.displayCombiningTerms(),
         table: qm.displayPrimeImplicantsTable(),
@@ -194,7 +196,9 @@ function App() {
               </StepCard>
 
               {/* STEP 3: Prime Implicant Table */}
-              <StepCard index="03" title="Prime Implicant Table" content={results.table} />
+              <StepCard index="03" title="Prime Implicant Table">
+                <PITableViz data={results.piTableData} />
+              </StepCard>
 
               {/* STEP 4: Essential Prime Implicants */}
               <StepCard index="04" title="Essential Prime Implicants" content={results.epi} />

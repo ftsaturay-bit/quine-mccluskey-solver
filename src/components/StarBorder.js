@@ -32,7 +32,7 @@ const StarBorder = ({
           animationDuration: speed
         }}
       ></div>
-      <div className="relative z-1 bg-gradient-to-b from-slate-900 to-black border border-white/10 text-white text-center text-[16px] py-[16px] px-[26px] rounded-[20px]">
+      <div className={`relative z-1 bg-gradient-to-b from-slate-900 to-black border border-white/10 text-white py-8 px-6 rounded-[20px] ${className.includes('text-center') ? 'text-center' : ''}`}>
         {children}
       </div>
     </Component>

@@ -10,8 +10,8 @@ function BinaryChips({ binary }) {
           className={`
             w-7 h-7 flex items-center justify-center rounded-md text-xs font-black font-mono
             transition-all duration-300
-            ${bit === '-' 
-              ? 'bg-orange-500/10 text-orange-400/60 border border-orange-500/20' 
+            ${bit === '-'
+              ? 'bg-orange-500/10 text-orange-400/60 border border-orange-500/20'
               : bit === '1'
                 ? 'bg-blue-500/20 text-blue-300 border border-blue-500/40 shadow-[0_0_8px_rgba(59,130,246,0.2)]'
                 : 'bg-slate-800/60 text-slate-500 border border-slate-700/50'
@@ -49,13 +49,13 @@ function IterationTable({ iteration, groups }) {
           {groups.map((group, gIdx) => (
             <tbody key={gIdx} className="group/row-group border-b border-white/5 last:border-0">
               {group.terms.map((term, tIdx) => (
-                <tr 
-                  key={tIdx} 
+                <tr
+                  key={tIdx}
                   className="transition-colors group-hover/row-group:bg-white/[0.03]"
                 >
                   {tIdx === 0 && (
-                    <td 
-                      rowSpan={group.terms.length} 
+                    <td
+                      rowSpan={group.terms.length}
                       className="px-6 py-4 align-middle border-r border-white/5 bg-white/[0.01] group-hover/row-group:bg-white/[0.05] transition-colors"
                     >
                       <div className="flex flex-col items-center">
