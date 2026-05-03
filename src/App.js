@@ -29,19 +29,18 @@ function App() {
     }
 
     try {
-      // TODO: Import and instantiate QuineMcCluskeyAlgorithm once logic is implemented
-      // const QMC = require('./logic/QuineMcCluskeyAlgorithm').default;
-      // const mintermArray = minterms.split(',').map(s => parseInt(s.trim(), 10));
-      // const qm = new QMC(mintermArray, variables.toUpperCase());
-      // qm.solve();
-      // setOutput(
-      //   qm.displayGroupedMinterms() + '\n' +
-      //   qm.displayCombiningTerms() + '\n' +
-      //   qm.displayPrimeImplicantsTable() + '\n' +
-      //   qm.displayEssentialPrimeImplicantsTable() + '\n' +
-      //   qm.getPOS()
-      // );
-      setOutput('[Logic not yet implemented — fill in TODO stubs in src/logic/]');
+      //Import and instantiate QuineMcCluskeyAlgorithm once logic is implemented
+      const QMC = require('./logic/QuineMcCluskeyAlgorithm').default;
+      const mintermArray = minterms.split(',').map(s => parseInt(s.trim(), 10));
+      const qm = new QMC(mintermArray, variables.toUpperCase());
+      qm.solve();
+      setOutput(
+        qm.displayGroupedMinterms() + '\n' +
+        qm.displayCombiningTerms() + '\n' +
+        qm.displayPrimeImplicantsTable() + '\n' +
+        qm.displayEssentialPrimeImplicantsTable() + '\n' +
+        qm.getPOS()
+      );
     } catch (err) {
       setError(err.message);
     }
