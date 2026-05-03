@@ -332,6 +332,28 @@ export default class QuineMcCluskeyAlgorithm {
     this.essentialPrimeImplicantsDisplay = display;
   }
 
+  getGroupedMintermsData() {
+    const initialGroups = this.simplification[0];
+    const groups = [];
+
+    for (let i = 0; i < initialGroups.length; i++) {
+      if (initialGroups[i].length === 0) continue;
+      groups.push({
+        ones: i,
+        minterms: initialGroups[i].map(m => ({
+          decimal: m.getValue(),
+          binary: m.getBinaryRepresentation()
+        }))
+      });
+    }
+
+    return {
+      originalMinterms: this.originalMinterms,
+      complement: this.mintermsDecimal,
+      groups
+    };
+  }
+
   displayGroupedMinterms() {
     // Start with an empty string that will hold the entire display
     let display = "";
@@ -365,6 +387,33 @@ export default class QuineMcCluskeyAlgorithm {
     return display;
   }
 
+
+  getSimplificationData() {
+    const iterations = this.simplification.map((iterGroups, iterIndex) => {
+      const groups = [];
+      for (let i = 0; i < iterGroups.length; i++) {
+        if (iterGroups[i].length === 0) continue;
+        groups.push({
+          ones: i,
+          terms: iterGroups[i].map(t => ({
+            binary: t.getBinaryRepresentation(),
+            covers: t.getValues(),
+            isCombined: t.isCombined
+          }))
+        });
+      }
+      return { iteration: iterIndex, groups };
+    });
+
+    return {
+      iterations,
+      primeImplicants: this.primeImplicants.map(pi => ({
+        binary: pi.getBinaryRepresentation(),
+        covers: pi.getValues(),
+        pos: pi.getPOS()
+      }))
+    };
+  }
 
   displayCombiningTerms() {
     // Start with an empty string that will hold the entire display

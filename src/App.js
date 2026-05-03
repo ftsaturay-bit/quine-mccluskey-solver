@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import InfiniteGrid from './components/TheInfiniteGrid';
+import StarBorder from './components/StarBorder';
+import GroupMintermsViz from './components/GroupMintermsViz';
 
 function App() {
   const [minterms, setMinterms] = useState('');
@@ -35,6 +37,7 @@ function App() {
       const qm = new QMC(mintermArray, variables.toUpperCase());
       qm.solve();
       setResults({
+        groupedData: qm.getGroupedMintermsData(),
         grouped: qm.displayGroupedMinterms(),
         pi: qm.displayCombiningTerms(),
         table: qm.displayPrimeImplicantsTable(),
@@ -133,7 +136,7 @@ function App() {
                   <button
                     type="button"
                     onClick={handleClear}
-                    className="bg-slate-800/80 hover:bg-slate-700 text-slate-300 font-black px-6 py-5 rounded-2xl transition-all active:scale-95 uppercase tracking-wider text-xs border border-white/5"
+                    className="group relative bg-transparent hover:bg-orange-500/5 text-orange-500/50 hover:text-orange-400 font-black px-6 py-5 rounded-2xl transition-all active:scale-95 uppercase tracking-wider text-xs border border-orange-500/20 hover:border-orange-500/50 shadow-[0_0_15px_rgba(234,88,12,0)] hover:shadow-[0_0_15px_rgba(234,88,12,0.1)]"
                   >
                     Clear
                   </button>
@@ -153,19 +156,19 @@ function App() {
       {/* ── RESULTS SECTION ── */}
       {output && results && (
         <section id="results" className="relative z-10 flex flex-col items-center px-4 py-24 border-t border-white/5 space-y-16">
-          
+
           <div className="flex flex-col items-center gap-4 mb-12">
             <h2 className="text-4xl md:text-5xl font-black text-white uppercase tracking-tighter text-center">Optimization Journey</h2>
             <div className="h-1 w-24 bg-blue-500 rounded-full"></div>
           </div>
 
           <div className="w-full max-w-6xl flex gap-8 md:gap-16">
-            
+
             {/* LEFT SIDE: VERTICAL STEPPER */}
             <div className="hidden md:flex flex-col items-center relative pt-10">
               {/* The Connecting Line */}
               <div className="absolute top-10 bottom-10 w-px bg-gradient-to-b from-blue-500 via-blue-500/50 to-transparent"></div>
-              
+
               <div className="flex flex-col gap-[28rem]"> {/* Manual gap adjustment to match card heights roughly */}
                 <StepIndicator num="1" />
                 <StepIndicator num="2" />
@@ -177,9 +180,11 @@ function App() {
 
             {/* RIGHT SIDE: THE CARDS */}
             <div className="flex-1 space-y-16">
-              
+
               {/* STEP 1: Group Minterms */}
-              <StepCard index="01" title="Group Minterms" content={results.grouped} />
+              <StepCard index="01" title="Group Minterms">
+                <GroupMintermsViz data={results.groupedData} />
+              </StepCard>
 
               {/* STEP 2: Prime Implicants */}
               <StepCard index="02" title="Prime Implicants" content={results.pi} />
@@ -190,20 +195,20 @@ function App() {
               {/* STEP 4: Essential Prime Implicants */}
               <StepCard index="04" title="Essential Prime Implicants" content={results.epi} />
 
-              {/* STEP 5: Final Expression */}
               <div className="relative group">
-                <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-[2.5rem] blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-                <div className="relative bg-slate-900/80 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-8 md:p-12 shadow-2xl overflow-hidden">
-                   <div className="flex items-center gap-6 mb-8">
+                <StarBorder color="cyan" speed="2.5s" thickness={6} className="w-full">
+                  <div className="flex flex-col items-center">
+                    <div className="flex items-center gap-6 mb-6">
                       <span className="text-6xl font-black text-blue-500/20 tabular-nums">05</span>
                       <h3 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tight">Final Expression</h3>
-                   </div>
-                   <div className="bg-blue-500/10 border border-blue-500/20 rounded-2xl p-8 text-center">
+                    </div>
+                    <div className="bg-blue-500/10 border border-blue-500/20 rounded-2xl p-8 text-center w-full">
                       <p className="text-3xl md:text-4xl lg:text-5xl font-mono font-bold text-blue-400 break-words">
                         {results.final.replace("Final POS Expression: ", "")}
                       </p>
-                   </div>
-                </div>
+                    </div>
+                  </div>
+                </StarBorder>
               </div>
 
             </div>
@@ -226,19 +231,22 @@ function StepIndicator({ num }) {
 }
 
 // Helper Component for Steps
-function StepCard({ index, title, content }) {
+function StepCard({ index, title, content, children }) {
   return (
-    <div className="relative group">
-      <div className="absolute -inset-0.5 bg-white/5 rounded-[2.5rem] transition duration-500"></div>
-      <div className="relative bg-slate-900/40 backdrop-blur-2xl border border-white/5 rounded-[2.5rem] p-8 md:p-10 shadow-xl">
+    <div className="relative">
+      <StarBorder color="#f97316" speed="2.5s" thickness={4} className="w-full">
         <div className="flex items-center gap-6 mb-8">
-          <span className="text-5xl font-black text-slate-700 tabular-nums">{index}</span>
+          <span className="text-5xl font-black text-white/5 tabular-nums">{index}</span>
           <h3 className="text-xl md:text-2xl font-black text-slate-300 uppercase tracking-widest">{title}</h3>
         </div>
-        <pre className="w-full bg-black/40 rounded-2xl p-6 overflow-x-auto text-blue-300/80 font-mono text-sm leading-relaxed border border-white/5">
-          {content}
-        </pre>
-      </div>
+        {children ? (
+          children
+        ) : (
+          <pre className="w-full bg-black/40 rounded-2xl p-6 overflow-x-auto text-blue-300/80 font-mono text-sm leading-relaxed border border-white/5">
+            {content}
+          </pre>
+        )}
+      </StarBorder>
     </div>
   );
 }
