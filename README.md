@@ -134,4 +134,5 @@ src/
   logic/
     Minterm.js            ← Minterm class (TODO stubs)
     QuineMcCluskeyAlgorithm.js  ← QMC algorithm (TODO stubs)
+    ALGORITHM.md          ← detailed explanation of logic 
 ```
