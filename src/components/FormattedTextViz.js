@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 function StepRow({ id, title, items, isMinterms }) {
   return (
@@ -6,7 +6,9 @@ function StepRow({ id, title, items, isMinterms }) {
       {/* Step Header Column */}
       <div className="w-full md:w-64 flex flex-col gap-2 shrink-0">
         <div className="flex items-center gap-3">
-          <span className="text-[10px] font-black text-orange-500/60 tabular-nums tracking-[0.3em] uppercase">0{id}</span>
+          <span className="text-[10px] font-black text-orange-500/60 tabular-nums tracking-[0.3em] uppercase">
+            0{id}
+          </span>
           <div className="h-px flex-1 bg-orange-500/20"></div>
         </div>
         <h3 className="text-xl font-black text-white uppercase tracking-tight group-hover:text-orange-400 transition-colors duration-300">
@@ -19,27 +21,37 @@ function StepRow({ id, title, items, isMinterms }) {
         <div className="bg-slate-900/40 backdrop-blur-md rounded-2xl border border-white/5 p-6 hover:border-orange-500/20 transition-all duration-500 shadow-xl group-hover:shadow-orange-500/5">
           {isMinterms ? (
             <div className="flex flex-wrap gap-2">
-              {items[0]?.split(',').map((m, i) => (
-                <span key={i} className="px-3 py-1.5 rounded-lg bg-orange-500/5 border border-orange-500/10 text-orange-400 font-mono text-sm shadow-inner">
+              {items[0]?.split(",").map((m, i) => (
+                <span
+                  key={i}
+                  className="px-3 py-1.5 rounded-lg bg-orange-500/5 border border-orange-500/10 text-orange-400 font-mono text-sm shadow-inner"
+                >
                   {m.trim()}
                 </span>
-              )) || <span className="text-slate-600 italic text-sm">System: All minterms successfully satisfied.</span>}
+              )) || (
+                <span className="text-slate-600 italic text-sm">
+                  System: All minterms successfully satisfied.
+                </span>
+              )}
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-3">
               {items.map((item, i) => (
-                <div key={i} className="flex items-center justify-between p-4 rounded-xl bg-black/30 border border-white/5 hover:bg-white/[0.03] hover:border-orange-500/10 transition-all duration-300 group/item">
+                <div
+                  key={i}
+                  className="flex items-center justify-between p-4 rounded-xl bg-black/30 border border-white/5 hover:bg-white/[0.03] hover:border-orange-500/10 transition-all duration-300 group/item"
+                >
                   <div className="flex items-center gap-4">
                     <div className="w-1.5 h-1.5 rounded-full bg-orange-500/30 group-hover/item:bg-orange-500 transition-colors"></div>
                     <span className="font-mono text-sm text-slate-300 group-hover/item:text-white transition-colors">
-                      {item.split('|')[0].replace(/^- /, '').trim()}
+                      {item.split("|")[0].replace(/^- /, "").trim()}
                     </span>
                   </div>
-                  {item.includes('|') && (
+                  {item.includes("|") && (
                     <div className="flex items-center gap-3">
                       <div className="h-4 w-px bg-white/10"></div>
                       <span className="text-[10px] font-mono text-slate-500 group-hover/item:text-slate-400 uppercase tracking-tighter tabular-nums">
-                        {item.split('|')[1].trim()}
+                        {item.split("|")[1].trim()}
                       </span>
                     </div>
                   )}
@@ -58,15 +70,18 @@ export default function FormattedTextViz({ content }) {
 
   const sections = [];
   const globalSummary = [];
-  const lines = content.split('\n');
+  const lines = content.split("\n");
   let current = null;
 
-  lines.forEach(line => {
+  lines.forEach((line) => {
     const text = line.trim();
     if (!text) return;
 
     // Global summary lines (typically at the end)
-    if (text.toLowerCase().includes('total selected') || text.toLowerCase().includes('minterms are covered')) {
+    if (
+      text.toLowerCase().includes("total selected") ||
+      text.toLowerCase().includes("minterms are covered")
+    ) {
       globalSummary.push(text);
       return;
     }
@@ -74,7 +89,11 @@ export default function FormattedTextViz({ content }) {
     const headerMatch = text.match(/^(\d+)\.\s+(.*)/);
     if (headerMatch) {
       if (current) sections.push(current);
-      current = { id: headerMatch[1], title: headerMatch[2].replace(':', ''), items: [] };
+      current = {
+        id: headerMatch[1],
+        title: headerMatch[2].replace(":", ""),
+        items: [],
+      };
     } else if (current) {
       current.items.push(text);
     }
@@ -90,7 +109,7 @@ export default function FormattedTextViz({ content }) {
           id={section.id}
           title={section.title}
           items={section.items}
-          isMinterms={section.title.toLowerCase().includes('minterms')}
+          isMinterms={section.title.toLowerCase().includes("minterms")}
         />
       ))}
 
@@ -103,7 +122,10 @@ export default function FormattedTextViz({ content }) {
 
           <div className="relative flex flex-col gap-1">
             {globalSummary.map((text, i) => (
-              <p key={i} className="text-lg md:text-2xl font-black text-white uppercase tracking-tight">
+              <p
+                key={i}
+                className="text-lg md:text-2xl font-black text-white uppercase tracking-tight"
+              >
                 {text}
               </p>
             ))}

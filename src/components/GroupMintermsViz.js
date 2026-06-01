@@ -1,18 +1,19 @@
-import React from 'react';
+import React from "react";
 
 // Renders a single binary string as individual bit chips
 function BinaryBits({ binary }) {
   return (
     <div className="flex gap-1">
-      {binary.split('').map((bit, i) => (
+      {binary.split("").map((bit, i) => (
         <span
           key={i}
           className={`
-            w-7 h-7 flex items-center justify-center rounded-md text-xs font-black font-mono
+            w-7 h-7 flex-shrink-0 flex items-center justify-center rounded-md text-xs font-black font-mono
             transition-all duration-300
-            ${bit === '1'
-              ? 'bg-blue-500/20 text-blue-300 border border-blue-500/40 shadow-[0_0_8px_rgba(59,130,246,0.3)]'
-              : 'bg-slate-800/60 text-slate-500 border border-slate-700/50'
+            ${
+              bit === "1"
+                ? "bg-blue-500/20 text-blue-300 border border-blue-500/40 shadow-[0_0_8px_rgba(59,130,246,0.3)]"
+                : "bg-slate-800/60 text-slate-500 border border-slate-700/50"
             }
           `}
         >
@@ -37,16 +38,20 @@ function MintermRow({ decimal, binary }) {
 
 // A single group column
 function GroupColumn({ ones, minterms }) {
-  const style = 'from-blue-900/20 border-blue-700/30 text-blue-400';
+  const style = "from-blue-900/20 border-blue-700/30 text-blue-400";
 
   return (
-    <div className={`flex flex-col rounded-2xl border bg-gradient-to-b ${style} p-4 gap-3 min-w-[180px]`}>
+    <div
+      className={`flex flex-col rounded-2xl border bg-gradient-to-b ${style} p-4 gap-3 min-w-fit flex-shrink-0`}
+    >
       {/* Group Header */}
       <div className="text-center pb-3 border-b border-white/5">
-        <span className="text-[10px] uppercase tracking-[0.25em] font-black opacity-60">Group</span>
+        <span className="text-[10px] uppercase tracking-[0.25em] font-black opacity-60">
+          Group
+        </span>
         <div className="text-2xl font-black">{ones}</div>
         <span className="text-[10px] uppercase tracking-widest font-bold opacity-50">
-          {ones === 1 ? '1 one' : `${ones} ones`}
+          {ones === 1 ? "1 one" : `${ones} ones`}
         </span>
       </div>
       {/* Minterms */}
@@ -68,17 +73,25 @@ export default function GroupMintermsViz({ data }) {
       {/* Info Bar */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="flex-1 bg-slate-900/60 border border-white/5 rounded-xl px-4 py-3 transition-all hover:border-blue-500/20">
-          <span className="text-[10px] uppercase tracking-widest font-black text-slate-600 block mb-1">Original Minterms</span>
-          <span className="font-mono text-sm text-slate-300">{originalMinterms.join(', ')}</span>
+          <span className="text-[10px] uppercase tracking-widest font-black text-slate-600 block mb-1">
+            Original Minterms
+          </span>
+          <span className="font-mono text-sm text-slate-300">
+            {originalMinterms.join(", ")}
+          </span>
         </div>
         <div className="flex-1 bg-slate-900/60 border border-orange-500/20 rounded-xl px-4 py-3 transition-all hover:border-orange-500/40 group/info">
-          <span className="text-[10px] uppercase tracking-widest font-black text-orange-500/40 group-hover/info:text-orange-500/60 block mb-1 transition-colors">Complement (Maxterms)</span>
-          <span className="font-mono text-sm text-orange-400/90 group-hover/info:text-orange-500 transition-colors">{complement.join(', ')}</span>
+          <span className="text-[10px] uppercase tracking-widest font-black text-orange-500/40 group-hover/info:text-orange-500/60 block mb-1 transition-colors">
+            Complement (Maxterms)
+          </span>
+          <span className="font-mono text-sm text-orange-400/90 group-hover/info:text-orange-500 transition-colors">
+            {complement.join(", ")}
+          </span>
         </div>
       </div>
 
       {/* Group Columns — horizontal scroll on small screens */}
-      <div className="flex gap-4 overflow-x-auto pb-4 custom-scrollbar justify-center">
+      <div className="flex gap-4 overflow-x-auto pb-4 custom-scrollbar justify-start md:justify-center">
         {groups.map((g) => (
           <GroupColumn key={g.ones} ones={g.ones} minterms={g.minterms} />
         ))}
