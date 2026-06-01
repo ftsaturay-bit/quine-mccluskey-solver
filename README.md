@@ -26,7 +26,13 @@ Then open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ### Output
 
-The app should then display all intermediate steps and the final minimized POS expression in a `<pre>` block.
+The app displays all intermediate steps using rich visualization components (one card per step):
+
+1. **Group Minterms** — rendered by `GroupMintermsViz`
+2. **Prime Implicants** — rendered by `SimplificationViz`
+3. **Prime Implicant Table** — rendered by `PITableViz`
+4. **Essential Prime Implicants** — rendered by `FormattedTextViz`
+5. **Final POS Expression** — displayed in a highlighted result card
 
 ---
 
@@ -36,21 +42,23 @@ The app should then display all intermediate steps and the final minimized POS e
 
 Represents a single minterm or a combined group of minterms.
 
-**Methods to implement:**
+**Methods:**
 
 | Method | What it does |
 |--------|-------------|
-| `constructor(value, n, setOfMinterms, binaryRep)` | Two modes: single minterm (compute binary from value) or combined minterm (use provided binary + set) |
-| `getValue()` | Return the decimal value |
+| `constructor(value, n, setOfMinterms, binaryRep)` | Two modes: single minterm (compute binary from `value`) or combined minterm (use provided `binaryRep` + `setOfMinterms`) |
+| `getValue()` | Return the decimal value (`-1` for combined terms) |
 | `getBinaryRepresentation()` | Return the binary/dash string |
-| `getSetOfMinterms()` | Return the Set of decimal minterms this term covers |
+| `getSetOfMinterms()` | Return the `Set` of decimal minterms this term covers |
 | `countNumberOfOnes()` | Count `1` characters in the binary string |
-| `toBinaryString(value, n)` | Convert decimal to zero-padded binary string of length n |
-| `combineMinterms(other)` | If terms differ in exactly 1 bit, return a new combined Minterm with `-` in that position; else return `{ success: false }` |
-| `doesItMatch(value)` | Return true if value is in the setOfMinterms |
-| `mintermToExpression(variables)` | Convert binary/dash string to SOP literal expression |
+| `toBinaryString(value, n)` | Convert decimal to zero-padded binary string of length `n` |
+| `combineMinterms(other)` | If terms differ in exactly 1 bit, return `{ success: true, minterm: <new Minterm> }` with `-` at the differing position; else return `{ success: false }` |
+| `doesItMatch(value)` | Return `true` if `value` is in `setOfMinterms` |
+| `mintermToExpression(variables)` | Convert binary/dash string to SOP literal expression (`0` → complemented e.g. `A'`, `1` → uncomplemented e.g. `A`) |
 | `equals(other)` | Compare binary representations |
 | `toString()` | Return the binary representation |
+
+> **Note:** `mintermToExpression` uses SOP convention (bit `0` → `A'`, bit `1` → `A`). The POS conversion is handled separately by `QuineMcCluskeyAlgorithm.mintermToPOSExpression`.
 
 ---
 
@@ -58,24 +66,27 @@ Represents a single minterm or a combined group of minterms.
 
 Contains the full QMC algorithm. Takes a list of **minterms** and operates in **POS form** (using maxterms — the complement of the minterms).
 
-**Methods to implement:**
+**Methods:**
 
 | Method | What it does |
 |--------|-------------|
-| `constructor(mintermsDecimal, variablesLetter)` | Store inputs, generate complement (maxterms), convert each to a Minterm object |
+| `constructor(mintermsDecimal, variablesLetter)` | Store inputs, generate complement (maxterms), convert each to a `Minterm` object |
 | `generateComplement(minterms)` | Return all integers in `[0, 2^n)` NOT in minterms |
 | `solve()` | Orchestrate steps 1–4 |
 | `groupByOnes()` | Sort minterms into groups by their count of 1-bits |
 | `findPrimeImplicants(groups)` | Iteratively combine adjacent groups; uncombined terms become prime implicants |
-| `createPrimeImplicantTable()` | Build a text coverage table: PI rows × maxterm columns, mark 'X' where PI covers maxterm |
-| `getPrimeImplicantTableData()` | Return structured `{ primeImplicants, minterms }` object for rendering |
-| `mintermToPOSExpression(minterm)` | Convert binary/dash rep to POS clause string e.g. `(A + B')` |
-| `findEssentialPrimeImplicants()` | Find EPIs (columns covered by one PI), then greedily cover remaining maxterms |
+| `createPrimeImplicantTable()` | Build a text coverage table: PI rows × maxterm columns, mark `X` where PI covers maxterm |
+| `getPrimeImplicantTableData()` | Return `{ primeImplicants, minterms }` structured object for rendering |
+| `getPITableData()` | Return `{ minterms, rows }` structured object used by `PITableViz` |
+| `getGroupedMintermsData()` | Return `{ originalMinterms, complement, groups }` used by `GroupMintermsViz` |
+| `getSimplificationData()` | Return `{ iterations, primeImplicants }` used by `SimplificationViz` |
+| `mintermToPOSExpression(minterm)` | Convert binary/dash rep to POS clause string e.g. `(A + B')` (bit `0` → uncomplemented, bit `1` → complemented) |
+| `findEssentialPrimeImplicants()` | Find EPIs (columns covered by exactly one PI), then greedily cover remaining maxterms |
 | `displayGroupedMinterms()` | Return formatted string of initial groups |
 | `displayCombiningTerms()` | Return string showing all iteration steps and final prime implicants |
 | `displayPrimeImplicantsTable()` | Return the prime implicant table string |
 | `displayEssentialPrimeImplicantsTable()` | Return the EPI selection display string |
-| `getPOS()` | Return the final minimized POS expression |
+| `getPOS()` | Return the final minimized POS expression string |
 
 ---
 
@@ -111,15 +122,17 @@ For each bit in a prime implicant's binary representation:
 
 The form collects:
 1. **Minterms** — text input, comma-separated integers
-2. **Variables** — text input, uppercase letters only, max 6
+2. **Variables** — text input, uppercase letters only, max 6 (auto-uppercased on input)
 
 On submit:
-- Validate inputs (numbers only, letters only, no duplicates, values within range)
+- Validate inputs (numbers only, letters only, values within range)
 - Instantiate `QuineMcCluskeyAlgorithm` and call `.solve()`
-- Display all step outputs in a `<pre>` block
+- Collect structured data via `getGroupedMintermsData()`, `getSimplificationData()`, `getPITableData()`, `displayEssentialPrimeImplicantsTable()`, and `getPOS()`
+- Render each step in a dedicated visualization component card
+- Smoothly scroll to the results section
 
 On clear:
-- Reset all fields and output
+- Reset minterms, variables, output visibility, and error state
 
 ---
 
@@ -127,12 +140,26 @@ On clear:
 
 ```
 src/
-  App.js                  ← Main component (form + output)
-  App.css                 ← Minimal styles
-  index.js                ← React entry point
-  index.css               ← Global reset
+  App.js                        ← Main component (form + step cards)
+  App.css                       ← Base CSS entry (minimal)
+  index.js                      ← React entry point
+  index.css                     ← Global reset
   logic/
-    Minterm.js            ← Minterm class (TODO stubs)
-    QuineMcCluskeyAlgorithm.js  ← QMC algorithm (TODO stubs)
-    ALGORITHM.md          ← detailed explanation of logic 
+    Minterm.js                  ← Minterm class
+    QuineMcCluskeyAlgorithm.js  ← QMC algorithm
+    ALGORITHM.md                ← Detailed explanation of the algorithm logic
+  components/
+    GroupMintermsViz.js         ← Step 1: Grouped minterms visualization
+    SimplificationViz.js        ← Step 2: Prime implicant combining visualization
+    PITableViz.js               ← Step 3: Prime implicant table visualization
+    FormattedTextViz.js         ← Step 4: EPI selection display
+    StarBorder.js               ← Animated star border UI component
+    TheInfiniteGrid.js          ← Animated background grid
+  styles/
+    global.css                  ← Global styles and design tokens
+    animations.css              ← Keyframe animations
+  lib/
+    utils.js                    ← Shared utility helpers
 ```
+
+> **Styling:** The app uses **Tailwind CSS** (v3) for all component-level styling, with additional global styles in `src/styles/`.
