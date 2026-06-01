@@ -1,10 +1,14 @@
 // src/logic/Minterm.js
 
 export default class Minterm {
-
-  constructor(value, numberOfVariables, setOfMinterms = null, binaryRepresentation = null) {
+  constructor(
+    value,
+    numberOfVariables,
+    setOfMinterms = null,
+    binaryRepresentation = null,
+  ) {
     //Mode 1: pag isang minterm lang nilagay:
-    if(setOfMinterms === null){
+    if (setOfMinterms === null) {
       // saves the single decimal number
       this.value = value;
 
@@ -16,18 +20,17 @@ export default class Minterm {
     }
 
     //Mode 2: setOfMinterms is provided:
-    else{
-
-    // Store the inputted binary terms directly
+    else {
+      // Store the inputted binary terms directly
       this.binaryRepresentation = binaryRepresentation;
 
-    //placeholder
+      //placeholder
       this.value = -1;
 
-    //initialize a set object containing the provided set of minterms
+      //initialize a set object containing the provided set of minterms
       this.setOfMinterms = new Set(setOfMinterms);
     }
-
+    this.isCombined = false;
   }
 
   getValue() {
@@ -39,26 +42,26 @@ export default class Minterm {
   }
 
   getSetOfMinterms() {
-    return  this.setOfMinterms;
+    return this.setOfMinterms;
   }
 
   countNumberOfOnes() {
     let count = 0;
-    for(let i = 0; i < this.binaryRepresentation.length; i ++){
+    for (let i = 0; i < this.binaryRepresentation.length; i++) {
       //checks if the specific np. in the binary representation = 1
-      if(this.binaryRepresentation[i] === "1"){
+      if (this.binaryRepresentation[i] === "1") {
         //increments the count if i = 1
         count++;
       }
     }
-      return count;
+    return count;
   }
 
   toBinaryString(value, numberOfVariables) {
     let binaryString = "";
-    while(value > 0){
+    while (value > 0) {
       //modulo operator returns the remainder when value is divided by 2 (0 or 1)
-      let remainders = value%2;
+      let remainders = value % 2;
 
       //concatenates the remainder and appends to the binary string
       binaryString = remainders + binaryString;
@@ -68,10 +71,10 @@ export default class Minterm {
     }
 
     //Left-pad with '0's until the string length equals numberOfVariables
-    while(binaryString.length < numberOfVariables){
+    while (binaryString.length < numberOfVariables) {
       binaryString = "0" + binaryString;
     }
-    
+
     return binaryString;
   }
 
@@ -82,9 +85,9 @@ export default class Minterm {
     //Since otherMinterm is an object, we use our previously defined getBinaryRepresentation function to get its binary form
     let otherString = otherMinterm.getBinaryRepresentation();
 
-    for(let i = 0; i < this.binaryRepresentation.length; i++){
+    for (let i = 0; i < this.binaryRepresentation.length; i++) {
       //the ff block runs if there's different elements between the 2 minterms
-      if(this.binaryRepresentation[i] !== otherString[i]){
+      if (this.binaryRepresentation[i] !== otherString[i]) {
         //increments the difference count
         difference++;
         //notes where the difference is
@@ -93,9 +96,12 @@ export default class Minterm {
     }
 
     //Only minterms with 1 difference can be merged, no more or less.
-    if(difference === 1){
+    if (difference === 1) {
       //Create a new binary string identical to this one but with '-' at the differing position
-      let newBinaryString = this.binaryRepresentation.substring(0,index) + "-" + this.binaryRepresentation.substring(index + 1);
+      let newBinaryString =
+        this.binaryRepresentation.substring(0, index) +
+        "-" +
+        this.binaryRepresentation.substring(index + 1);
 
       //Merge the two setOfMinterms into a new combined Set
       let combinedSet = new Set();
@@ -107,10 +113,11 @@ export default class Minterm {
         combinedSet.add(item);
       }
 
-      return { success: true, minterm: new Minterm(-1, null, combinedSet, newBinaryString) };
-    }
-
-    else{
+      return {
+        success: true,
+        minterm: new Minterm(-1, null, combinedSet, newBinaryString),
+      };
+    } else {
       return { success: false };
     }
   }
@@ -123,23 +130,21 @@ export default class Minterm {
   mintermToExpression(variables) {
     let finalExpression = "";
     //Iterate over each character in this.binaryRepresentation
-     for (let i = 0; i < this.binaryRepresentation.length; i++) {
+    for (let i = 0; i < this.binaryRepresentation.length; i++) {
       let bit = this.binaryRepresentation[i];
 
-    //Skip positions where the character is '-'
-      if (bit === '-') {
-        continue; 
+      //Skip positions where the character is '-'
+      if (bit === "-") {
+        continue;
       }
 
-      
-    // TODO: For '0', append variables[i] + "'" (complemented literal) to the expression
-      else if (bit === '0') {
+      // TODO: For '0', append variables[i] + "'" (complemented literal) to the expression
+      else if (bit === "0") {
         finalExpression += variables[i] + "'";
       }
 
-      
-    // TODO: For '1', append variables[i] (uncomplemented literal) to the expression
-      else if (bit === '1') {
+      // TODO: For '1', append variables[i] (uncomplemented literal) to the expression
+      else if (bit === "1") {
         finalExpression += variables[i];
       }
     }
@@ -154,7 +159,7 @@ export default class Minterm {
   }
 
   toString() {
-    //Converts any object to a string 
+    //Converts any object to a string
     return this.binaryRepresentation;
   }
 }

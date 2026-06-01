@@ -4,7 +4,7 @@ import {
   motion,
   useMotionValue,
   useMotionTemplate,
-  useAnimationFrame
+  useAnimationFrame,
 } from "framer-motion";
 
 export const InfiniteGrid = ({ mousePos }) => {
@@ -44,7 +44,7 @@ export const InfiniteGrid = ({ mousePos }) => {
     <div
       ref={containerRef}
       className={cn(
-        "relative w-full h-screen flex flex-col items-center justify-center overflow-hidden bg-[#050505]"
+        "relative w-full h-screen flex flex-col items-center justify-center overflow-hidden bg-[#050505]",
       )}
     >
       {/* Dynamic Cursor Spotlight Glow */}
@@ -55,7 +55,12 @@ export const InfiniteGrid = ({ mousePos }) => {
 
       {/* Base Grid Layer (Very Faint White) */}
       <div className="absolute inset-0 z-0 opacity-[0.03]">
-        <GridPattern id="base-grid" offsetX={gridOffsetX} offsetY={gridOffsetY} color="text-white" />
+        <GridPattern
+          id="base-grid"
+          offsetX={gridOffsetX}
+          offsetY={gridOffsetY}
+          color="text-white"
+        />
       </div>
 
       {/* Revealed Grid Layer (White + Masked) */}
@@ -63,7 +68,12 @@ export const InfiniteGrid = ({ mousePos }) => {
         className="absolute inset-0 z-0 opacity-20"
         style={{ maskImage, WebkitMaskImage: maskImage }}
       >
-        <GridPattern id="revealed-grid" offsetX={gridOffsetX} offsetY={gridOffsetY} color="text-white" />
+        <GridPattern
+          id="revealed-grid"
+          offsetX={gridOffsetX}
+          offsetY={gridOffsetY}
+          color="text-white"
+        />
       </motion.div>
 
       {/* Ambient Background Glows */}
