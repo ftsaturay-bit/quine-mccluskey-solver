@@ -3,6 +3,17 @@ import React from "react";
 export default function PITableViz({ data }) {
   if (!data || !data.rows || !data.minterms) return null;
 
+  const essentialMinterms = new Set();
+  data.minterms.forEach((m) => {
+    let coverCount = 0;
+    data.rows.forEach((row) => {
+      if (row.coveredMinterms.includes(m)) coverCount++;
+    });
+    if (coverCount === 1) {
+      essentialMinterms.add(m);
+    }
+  });
+
   return (
     <div className="flex flex-col gap-4">
       <div className="overflow-x-auto rounded-2xl border border-white/5 bg-slate-900/40 backdrop-blur-md custom-scrollbar">
@@ -12,14 +23,21 @@ export default function PITableViz({ data }) {
               <th className="sticky left-0 z-20 bg-slate-800 px-6 py-4 text-[10px] uppercase tracking-widest font-black text-slate-400 border-r border-white/10 shadow-[4px_0_10px_rgba(0,0,0,0.3)]">
                 Prime Implicants
               </th>
-              {data.minterms.map((m) => (
-                <th
-                  key={m}
-                  className="px-4 py-4 text-[10px] uppercase tracking-widest font-black text-slate-400 text-center border-r border-white/5 min-w-[50px]"
-                >
-                  {m}
-                </th>
-              ))}
+              {data.minterms.map((m) => {
+                const isEssential = essentialMinterms.has(m);
+                return (
+                  <th
+                    key={m}
+                    className={`px-4 py-4 text-[10px] uppercase tracking-widest font-black text-center border-r border-white/5 min-w-[50px] transition-colors ${
+                      isEssential
+                        ? "bg-orange-500/20 text-orange-400 shadow-[inset_0_2px_15px_rgba(234,88,12,0.1)]"
+                        : "text-slate-400"
+                    }`}
+                  >
+                    {m}
+                  </th>
+                );
+              })}
             </tr>
           </thead>
           <tbody>
@@ -40,10 +58,17 @@ export default function PITableViz({ data }) {
                 </td>
                 {data.minterms.map((m) => {
                   const isCovered = row.coveredMinterms.includes(m);
+                  const isEssential = essentialMinterms.has(m);
+                  
+                  let bgClass = "";
+                  if (isCovered && isEssential) bgClass = "bg-orange-500/20";
+                  else if (isCovered) bgClass = "bg-orange-500/5";
+                  else if (isEssential) bgClass = "bg-orange-500/[0.03]";
+
                   return (
                     <td
                       key={m}
-                      className={`px-4 py-4 text-center border-r border-white/5 ${isCovered ? "bg-orange-500/5" : ""}`}
+                      className={`px-4 py-4 text-center border-r border-white/5 transition-colors ${bgClass}`}
                     >
                       {isCovered && (
                         <div className="flex justify-center">
