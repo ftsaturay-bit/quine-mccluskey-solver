@@ -24,22 +24,53 @@ function App() {
       return;
     }
 
-    if (!/^[0-9,\s]*$/.test(minterms)) {
-      setError("Minterms must be comma-separated numbers only.");
-      return;
-    }
-
     if (!/^[a-zA-Z]+$/.test(variables)) {
       setError("Variables must be letters only (e.g. ABCD).");
       return;
     }
 
+    const upperVars = variables.toUpperCase();
+    
+    // Check for duplicate letters in variables
+    if (new Set(upperVars).size !== upperVars.length) {
+      setError("Variables must not contain duplicate letters (e.g. AABC).");
+      return;
+    }
+
+    // Malformed syntax check for minterms
+    const rawSplit = minterms.split(",").map(s => s.trim());
+    if (rawSplit.some(s => s === "" || !/^\d+$/.test(s))) {
+      setError("Malformed syntax: Please enter valid comma-separated numbers without trailing or consecutive commas.");
+      return;
+    }
+
+    const mintermArray = rawSplit.map((s) => parseInt(s, 10));
+
+    // Double input check
+    const uniqueMinterms = new Set(mintermArray);
+    if (uniqueMinterms.size !== mintermArray.length) {
+      setError("Double input: Duplicate minterms are not allowed.");
+      return;
+    }
+
+    // Out of bounds and excessive variables checks
+    const maxMinterm = Math.max(...mintermArray);
+    const requiredVariables = Math.max(1, Math.ceil(Math.log2(maxMinterm + 1)));
+
+    if (upperVars.length < requiredVariables) {
+      const maxAllowed = (2 ** upperVars.length) - 1;
+      setError(`Out of bounds: With ${upperVars.length} variables, the highest allowed minterm is ${maxAllowed}, but you entered ${maxMinterm}.`);
+      return;
+    }
+
+    if (upperVars.length > requiredVariables) {
+      setError(`Excessive variables: Highest minterm ${maxMinterm} only requires ${requiredVariables} variables, but ${upperVars.length} were provided.`);
+      return;
+    }
+
     try {
       const QMC = require("./logic/QuineMcCluskeyAlgorithm").default;
-      const mintermArray = minterms
-        .split(",")
-        .map((s) => parseInt(s.trim(), 10));
-      const qm = new QMC(mintermArray, variables.toUpperCase());
+      const qm = new QMC(mintermArray, upperVars);
       qm.solve();
       setResults({
         groupedData: qm.getGroupedMintermsData(),
