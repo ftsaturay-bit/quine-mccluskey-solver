@@ -162,3 +162,23 @@ pre {
   color: var(--text-muted);
   line-height: 1.7;
 }
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: hsla(220, 20%, 15%, 0.5);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: hsla(230, 85%, 60%, 0.4);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: hsla(230, 85%, 60%, 0.7);
+}

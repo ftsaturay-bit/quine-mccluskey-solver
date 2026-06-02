@@ -91,7 +91,7 @@ export default function GroupMintermsViz({ data }) {
       </div>
 
       {/* Group Columns — horizontal scroll on small screens */}
-      <div className="flex gap-4 overflow-x-auto pb-4 custom-scrollbar justify-start md:justify-center">
+      <div className="flex gap-4 overflow-x-auto pb-4 custom-scrollbar justify-start">
         {groups.map((g) => (
           <GroupColumn key={g.ones} ones={g.ones} minterms={g.minterms} />
         ))}
