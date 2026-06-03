@@ -1,6 +1,7 @@
 import React from "react";
 
 export default function PITableViz({ data }) {
+  // Dynamically derives essential minterms during render for UI consistency.
   if (!data || !data.rows || !data.minterms) return null;
 
   const essentialMinterms = new Set();

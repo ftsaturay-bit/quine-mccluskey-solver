@@ -65,6 +65,7 @@ function GroupColumn({ ones, minterms }) {
 }
 
 export default function GroupMintermsViz({ data }) {
+  // Renders the first QM phase data directly to UI elements.
   if (!data) return null;
   const { originalMinterms, complement, groups } = data;
 

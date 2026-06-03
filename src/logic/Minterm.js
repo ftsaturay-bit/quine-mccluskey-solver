@@ -59,6 +59,7 @@ export default class Minterm {
 
   toBinaryString(value, numberOfVariables) {
     let binaryString = "";
+    // Generates binary string via division to manually control length padding.
     while (value > 0) {
       //modulo operator returns the remainder when value is divided by 2 (0 or 1) which serves as the ai coefficient for the binary string
       let remainders = value % 2;

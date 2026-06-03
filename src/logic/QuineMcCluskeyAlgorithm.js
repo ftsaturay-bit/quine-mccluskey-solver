@@ -80,6 +80,9 @@ export default class QuineMcCluskeyAlgorithm {
   }
 
   findPrimeImplicants(groups) {
+    // Iteratively simplifies terms that differ by 1 variable.
+    // Uses a loop to prevent recursion errors and track UI steps.
+    
     // Set currentGroups to the initial groups and create a shallow copy of each group array
     let currentGroups = groups.map((group) => [...group]);
 
@@ -253,6 +256,8 @@ export default class QuineMcCluskeyAlgorithm {
   }
 
   findEssentialPrimeImplicants() {
+    // Finds minimal cover using a greedy heuristic (approximating Petrick's Method).
+    // Identifies EPIs first, then greedily selects additional PIs.
     let coverageMap = new Map();
     for (let PI of this.primeImplicants) {
       for (let term of PI.getSetOfMinterms()) {

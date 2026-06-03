@@ -8,6 +8,7 @@ import {
 } from "framer-motion";
 
 export const InfiniteGrid = ({ mousePos }) => {
+  // Uses Framer Motion outside the normal React cycle to prevent stuttering.
   const containerRef = useRef(null);
 
   const mouseX = useMotionValue(0);

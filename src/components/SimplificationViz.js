@@ -116,6 +116,7 @@ function IterationTable({ iteration, groups }) {
 }
 
 export default function SimplificationViz({ data }) {
+  // Iterates over pre-computed algorithm steps to visualize PI reduction.
   if (!data || !data.iterations) return null;
 
   return (

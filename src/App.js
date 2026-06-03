@@ -7,6 +7,7 @@ import PITableViz from "./components/PITableViz";
 import FormattedTextViz from "./components/FormattedTextViz";
 
 function App() {
+  // Centralized state to avoid re-running the algorithm on every render.
   const [minterms, setMinterms] = useState("");
   const [variables, setVariables] = useState("");
   const [output, setOutput] = useState(false);
@@ -31,13 +32,22 @@ function App() {
 
     const upperVars = variables.toUpperCase();
     
-    // Check for duplicate letters in variables
+    /* 
+     * Enforce strict variable uniqueness.
+     * The Quine-McCluskey algorithm treats each letter as a distinct boolean dimension.
+     * Duplicate letters (e.g., AABC) would corrupt the dimension tracking and maxterm generation.
+     */
     if (new Set(upperVars).size !== upperVars.length) {
       setError("Variables must not contain duplicate letters (e.g. AABC).");
       return;
     }
 
-    // Malformed syntax check for minterms
+    /* 
+     * Perform rigorous minterm parsing.
+     * Using split instead of global regex ensures we capture layout anomalies like
+     * consecutive commas (,,) or trailing delimiters which result in empty strings
+     * and break the algorithmic grouping phases.
+     */
     const rawSplit = minterms.split(",").map(s => s.trim());
     if (rawSplit.some(s => s === "" || !/^\d+$/.test(s))) {
       setError("Malformed syntax: Please enter valid comma-separated numbers without trailing or consecutive commas.");
@@ -46,14 +56,24 @@ function App() {
 
     const mintermArray = rawSplit.map((s) => parseInt(s, 10));
 
-    // Double input check
+    /* 
+     * Prevent redundant computational cycles.
+     * A Set is used for O(1) lookups to quickly detect double inputs, 
+     * which would otherwise skew prime implicant coverage maps later.
+     */
     const uniqueMinterms = new Set(mintermArray);
     if (uniqueMinterms.size !== mintermArray.length) {
       setError("Double input: Duplicate minterms are not allowed.");
       return;
     }
 
-    // Out of bounds and excessive variables checks
+    /* 
+     * Validate boolean algebraic boundaries.
+     * We calculate the absolute mathematical minimum of variables needed to represent 
+     * the largest minterm using log2(n+1). This ensures structural integrity:
+     * - Too few variables: Out of bounds logic (cannot map to truth table).
+     * - Too many variables: Excessive dimensions leading to exponentially redundant calculations.
+     */
     const maxMinterm = Math.max(...mintermArray);
     const requiredVariables = Math.max(1, Math.ceil(Math.log2(maxMinterm + 1)));
 

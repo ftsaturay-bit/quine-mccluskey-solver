@@ -9,6 +9,7 @@ const StarBorder = ({
   children,
   ...rest
 }) => {
+  // Encapsulates rotating gradient CSS animations into a reusable wrapper.
   return (
     <Component
       className={`relative inline-block overflow-hidden rounded-[20px] ${className}`}

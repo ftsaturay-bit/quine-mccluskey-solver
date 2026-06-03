@@ -66,6 +66,7 @@ function StepRow({ id, title, items, isMinterms }) {
 }
 
 export default function FormattedTextViz({ content }) {
+  // Parses raw formatted string logs into stylized UI step cards.
   if (!content) return null;
 
   const sections = [];
