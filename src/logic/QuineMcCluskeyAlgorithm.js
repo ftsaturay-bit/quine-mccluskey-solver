@@ -271,7 +271,7 @@ export default class QuineMcCluskeyAlgorithm {
     let epis = [];
 
     // 1. Find True Essential Prime Implicants (EPIs)
-    for (let [term, PIsAtTerm] of coverageMap.entries()) {
+    for (let PIsAtTerm of coverageMap.values()) {
       if (PIsAtTerm.length === 1) {
         let epi = PIsAtTerm[0];
         if (!selectedPIs.has(epi)) {
