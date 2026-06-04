@@ -5,6 +5,7 @@ import GroupMintermsViz from "./components/GroupMintermsViz";
 import SimplificationViz from "./components/SimplificationViz";
 import PITableViz from "./components/PITableViz";
 import FormattedTextViz from "./components/FormattedTextViz";
+import KMapViz from "./components/KMapViz";
 
 function App() {
   // Centralized state to avoid re-running the algorithm on every render.
@@ -31,7 +32,7 @@ function App() {
     }
 
     const upperVars = variables.toUpperCase();
-    
+
     /* 
      * Enforce strict variable uniqueness.
      * The Quine-McCluskey algorithm treats each letter as a distinct boolean dimension.
@@ -101,6 +102,7 @@ function App() {
         table: qm.displayPrimeImplicantsTable(),
         epi: qm.displayEssentialPrimeImplicantsTable(),
         final: qm.getPOS(),
+        finalImplicants: qm.getFinalImplicantsData(),
       });
       setOutput(true);
       // Scroll to results after render
@@ -328,6 +330,9 @@ function App() {
                       </div>
                     </div>
                   </StarBorder>
+
+                  {/* K-Map Visualization */}
+                  <KMapViz minterms={results.groupedData.originalMinterms} variables={variables} finalImplicants={results.finalImplicants} />
                 </div>
               </div>
             </div>

@@ -501,6 +501,13 @@ export default class QuineMcCluskeyAlgorithm {
     return this.essentialPrimeImplicantsDisplay;
   }
 
+  getFinalImplicantsData() {
+    return this.essentialPrimeImplicants.map((pi) => ({
+      expression: this.mintermToPOSExpression(pi),
+      coveredMinterms: Array.from(pi.getSetOfMinterms()),
+    }));
+  }
+
   getPOS() {
     if (this.essentialPrimeImplicants.length === 0) {
       return "Final POS Expression: No solution found (all minterms covered or no maxterms to simplify).";
