@@ -100,7 +100,7 @@ const KMapViz = ({ minterms, variables, finalImplicants = [] }) => {
   }
 
   return (
-    <div className="mt-12 flex flex-col items-center w-full relative">
+    <div className="flex flex-col items-center w-full relative">
       <div className="text-center mb-6">
         <h4 className="text-sm md:text-base font-black text-slate-300 uppercase tracking-[0.3em]">
           Karnaugh Map Visualization

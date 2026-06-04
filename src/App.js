@@ -328,11 +328,14 @@ function App() {
                           {results.final.replace("Final POS Expression: ", "")}
                         </p>
                       </div>
+
+                      {/* Divider */}
+                      <div className="w-full my-8 h-px bg-gradient-to-r from-transparent via-orange-500/30 to-transparent" />
+
+                      {/* K-Map Visualization — inside the Final Expression card */}
+                      <KMapViz minterms={results.groupedData.originalMinterms} variables={variables} finalImplicants={results.finalImplicants} />
                     </div>
                   </StarBorder>
-
-                  {/* K-Map Visualization */}
-                  <KMapViz minterms={results.groupedData.originalMinterms} variables={variables} finalImplicants={results.finalImplicants} />
                 </div>
               </div>
             </div>
