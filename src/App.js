@@ -128,6 +128,37 @@ function App() {
     setMousePos({ x: e.clientX, y: e.clientY });
   };
 
+  const handleScrollToStep = (direction) => {
+    const steps = ['top', 'step-1', 'step-2', 'step-3', 'step-4', 'step-5'];
+    
+    // Find the step currently closest to the top of the viewport
+    let currentStepIdx = 0;
+    let minDistance = Infinity;
+    
+    steps.forEach((stepId, idx) => {
+      const el = document.getElementById(stepId);
+      if (el) {
+        const rect = el.getBoundingClientRect();
+        // offset by 100px so if a step is just slightly below the top it gets matched
+        const distance = Math.abs(rect.top - 100); 
+        if (distance < minDistance) {
+          minDistance = distance;
+          currentStepIdx = idx;
+        }
+      }
+    });
+
+    let targetIdx = currentStepIdx + direction;
+    // Bound the index
+    if (targetIdx < 0) targetIdx = 0;
+    if (targetIdx > steps.length - 1) targetIdx = steps.length - 1;
+
+    const targetEl = document.getElementById(steps[targetIdx]);
+    if (targetEl) {
+      targetEl.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <div
       onMouseMove={handleMouseMove}
@@ -139,7 +170,7 @@ function App() {
       </div>
 
       {/* ── HERO SECTION ── */}
-      <section className="relative z-10 flex min-h-screen flex-col items-center justify-center px-6 py-12">
+      <section id="top" className="relative z-10 flex min-h-screen flex-col items-center justify-center px-6 py-12">
         <div className="w-full max-w-6xl flex flex-col items-center space-y-12">
           {/* Top: Title and Subtitle */}
           <div className="text-center space-y-6">
@@ -228,7 +259,7 @@ function App() {
         >
           <div className="w-full max-w-6xl space-y-16">
             {/* STEP 1: Group Minterms */}
-            <div className="flex gap-8 md:gap-16 relative group/step">
+            <div id="step-1" className="flex gap-8 md:gap-16 relative group/step">
               <div className="flex flex-col items-center flex-none relative pt-8">
                 <div className="w-12 h-12 rounded-full bg-orange-600 border-4 border-slate-950 flex items-center justify-center z-10 shadow-[0_0_20px_rgba(249,115,22,0.5)] group-hover/step:scale-110 transition-transform">
                   <span className="text-sm font-black text-white">1</span>
@@ -243,7 +274,7 @@ function App() {
             </div>
 
             {/* STEP 2: Prime Implicants */}
-            <div className="flex gap-8 md:gap-16 relative group/step">
+            <div id="step-2" className="flex gap-8 md:gap-16 relative group/step">
               <div className="flex flex-col items-center flex-none relative pt-8">
                 <div className="w-12 h-12 rounded-full bg-orange-600 border-4 border-slate-950 flex items-center justify-center z-10 shadow-[0_0_20px_rgba(249,115,22,0.5)] group-hover/step:scale-110 transition-transform">
                   <span className="text-sm font-black text-white">2</span>
@@ -258,7 +289,7 @@ function App() {
             </div>
 
             {/* STEP 3: Prime Implicant Table */}
-            <div className="flex gap-8 md:gap-16 relative group/step">
+            <div id="step-3" className="flex gap-8 md:gap-16 relative group/step">
               <div className="flex flex-col items-center flex-none relative pt-8">
                 <div className="w-12 h-12 rounded-full bg-orange-600 border-4 border-slate-950 flex items-center justify-center z-10 shadow-[0_0_20px_rgba(249,115,22,0.5)] group-hover/step:scale-110 transition-transform">
                   <span className="text-sm font-black text-white">3</span>
@@ -273,7 +304,7 @@ function App() {
             </div>
 
             {/* STEP 4: Essential Prime Implicants */}
-            <div className="flex gap-8 md:gap-16 relative group/step">
+            <div id="step-4" className="flex gap-8 md:gap-16 relative group/step">
               <div className="flex flex-col items-center flex-none relative pt-8">
                 <div className="w-12 h-12 rounded-full bg-orange-600 border-4 border-slate-950 flex items-center justify-center z-10 shadow-[0_0_20px_rgba(249,115,22,0.5)] group-hover/step:scale-110 transition-transform">
                   <span className="text-sm font-black text-white">4</span>
@@ -288,7 +319,7 @@ function App() {
             </div>
 
             {/* STEP 5: Final Expression */}
-            <div className="flex gap-8 md:gap-16 relative group/step">
+            <div id="step-5" className="flex gap-8 md:gap-16 relative group/step">
               <div className="flex flex-col items-center flex-none relative pt-8">
                 <div className="w-12 h-12 rounded-full bg-orange-600 border-4 border-slate-950 flex items-center justify-center z-10 shadow-[0_0_20px_rgba(249,115,22,0.5)] group-hover/step:scale-110 transition-transform">
                   <span className="text-sm font-black text-white">5</span>
@@ -341,6 +372,30 @@ function App() {
             </div>
           </div>
         </section>
+      )}
+
+      {/* ── FLOATING NAVIGATION CONTROLS ── */}
+      {output && results && (
+        <div className="fixed bottom-8 right-8 z-50 flex flex-col gap-2">
+          <button
+            onClick={() => handleScrollToStep(-1)}
+            className="w-12 h-12 flex items-center justify-center rounded-full bg-slate-900 border border-white/10 hover:border-orange-500/50 hover:bg-orange-500/10 text-slate-400 hover:text-orange-500 shadow-xl transition-all active:scale-95 group"
+            title="Previous Step"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 transition-transform group-hover:-translate-y-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 15l7-7 7 7" />
+            </svg>
+          </button>
+          <button
+            onClick={() => handleScrollToStep(1)}
+            className="w-12 h-12 flex items-center justify-center rounded-full bg-slate-900 border border-white/10 hover:border-orange-500/50 hover:bg-orange-500/10 text-slate-400 hover:text-orange-500 shadow-xl transition-all active:scale-95 group"
+            title="Next Step"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 transition-transform group-hover:translate-y-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+        </div>
       )}
     </div>
   );

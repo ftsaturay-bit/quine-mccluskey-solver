@@ -111,11 +111,12 @@ const KMapViz = ({ minterms, variables, finalImplicants = [] }) => {
         {/* CSS Grid chosen over <table> so grouping overlays can span multiple cells
             using grid-row/column placement — tables don't allow arbitrary overlapping children. */}
         <div 
-          className="relative grid"
+          className="relative grid mx-auto"
           style={{
-            // Fixed 5rem per track guarantees perfectly square cells regardless of label length
-            gridTemplateColumns: `5rem repeat(${colLabels.length}, 5rem)`,
-            gridTemplateRows: `5rem repeat(${rowLabels.length}, 5rem)`
+            // clamp() makes cells square and responsive:
+            // min 2.5rem on tiny screens, scales with viewport, caps at 5rem on large screens
+            gridTemplateColumns: `repeat(${colLabels.length + 1}, clamp(2.5rem, 13vw, 5rem))`,
+            gridTemplateRows: `repeat(${rowLabels.length + 1}, clamp(2.5rem, 13vw, 5rem))`
           }}
         >
           {/* Top-Left Corner Header — diagonal split between row and column variable labels */}
@@ -140,7 +141,7 @@ const KMapViz = ({ minterms, variables, finalImplicants = [] }) => {
           {colLabels.map((col, idx) => (
             <div
               key={`header-col-${col}`}
-              className="flex items-center justify-center font-mono text-slate-400 border-b border-white/10 text-xs sm:text-sm"
+              className="flex items-center justify-center font-mono text-slate-400 border-b border-white/10 text-[10px] sm:text-xs"
               style={{ gridRow: 1, gridColumn: idx + 2 }}
             >
               {col}
@@ -152,7 +153,7 @@ const KMapViz = ({ minterms, variables, finalImplicants = [] }) => {
             <React.Fragment key={`row-${row}`}>
               {/* Row Header (Gray-coded: 00, 01, 11, 10) */}
               <div
-                className="flex items-center justify-center font-mono text-slate-400 border-r border-white/10 text-xs sm:text-sm"
+                className="flex items-center justify-center font-mono text-slate-400 border-r border-white/10 text-[10px] sm:text-xs"
                 style={{ gridRow: rIdx + 2, gridColumn: 1 }}
               >
                 {row}
