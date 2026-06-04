@@ -107,16 +107,16 @@ const KMapViz = ({ minterms, variables, finalImplicants = [] }) => {
         </h4>
       </div>
 
-      <div className="relative overflow-x-auto bg-slate-950/60 backdrop-blur-xl p-6 md:p-8 rounded-[1.5rem] border border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.5)]">
+      <div className="relative overflow-x-auto bg-slate-950/60 backdrop-blur-xl p-3 sm:p-5 md:p-8 rounded-[1.5rem] border border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.5)]">
         {/* CSS Grid chosen over <table> so grouping overlays can span multiple cells
             using grid-row/column placement — tables don't allow arbitrary overlapping children. */}
         <div 
           className="relative grid mx-auto"
           style={{
-            // clamp() makes cells square and responsive:
-            // min 2.5rem on tiny screens, scales with viewport, caps at 5rem on large screens
-            gridTemplateColumns: `repeat(${colLabels.length + 1}, clamp(2.5rem, 13vw, 5rem))`,
-            gridTemplateRows: `repeat(${rowLabels.length + 1}, clamp(2.5rem, 13vw, 5rem))`
+            // Scales from ~1.8rem on tiny phones up to 5rem on desktop.
+            // A 4-var map has 5 columns: 5 × 1.8rem = 9rem min, very comfortable on mobile.
+            gridTemplateColumns: `repeat(${colLabels.length + 1}, clamp(1.8rem, 8vw, 5rem))`,
+            gridTemplateRows: `repeat(${rowLabels.length + 1}, clamp(1.8rem, 8vw, 5rem))`
           }}
         >
           {/* Top-Left Corner Header — diagonal split between row and column variable labels */}
@@ -128,11 +128,11 @@ const KMapViz = ({ minterms, variables, finalImplicants = [] }) => {
               </svg>
             </div>
             {/* Column variable (e.g. CD) — top-right of the split cell */}
-            <span className="absolute top-2 right-2 text-[10px] sm:text-xs font-black text-slate-400 uppercase tracking-widest">
+            <span className="absolute top-1 right-1 text-[7px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest">
               {colVars}
             </span>
             {/* Row variable (e.g. AB) — bottom-left of the split cell */}
-            <span className="absolute bottom-2 left-2 text-[10px] sm:text-xs font-black text-slate-400 uppercase tracking-widest">
+            <span className="absolute bottom-1 left-1 text-[7px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest">
               {rowVars}
             </span>
           </div>
@@ -141,7 +141,7 @@ const KMapViz = ({ minterms, variables, finalImplicants = [] }) => {
           {colLabels.map((col, idx) => (
             <div
               key={`header-col-${col}`}
-              className="flex items-center justify-center font-mono text-slate-400 border-b border-white/10 text-[10px] sm:text-xs"
+              className="flex items-center justify-center font-mono text-slate-400 border-b border-white/10 text-[8px] sm:text-[10px] md:text-xs"
               style={{ gridRow: 1, gridColumn: idx + 2 }}
             >
               {col}
@@ -153,7 +153,7 @@ const KMapViz = ({ minterms, variables, finalImplicants = [] }) => {
             <React.Fragment key={`row-${row}`}>
               {/* Row Header (Gray-coded: 00, 01, 11, 10) */}
               <div
-                className="flex items-center justify-center font-mono text-slate-400 border-r border-white/10 text-[10px] sm:text-xs"
+                className="flex items-center justify-center font-mono text-slate-400 border-r border-white/10 text-[8px] sm:text-[10px] md:text-xs"
                 style={{ gridRow: rIdx + 2, gridColumn: 1 }}
               >
                 {row}
@@ -172,14 +172,14 @@ const KMapViz = ({ minterms, variables, finalImplicants = [] }) => {
                     className="relative border border-white/5 flex items-center justify-center transition-all duration-300 group hover:bg-white/5 cursor-default overflow-hidden"
                     style={{ gridRow: rIdx + 2, gridColumn: cIdx + 2 }}
                   >
-                    {/* Decimal index shown on hover — useful for cross-referencing with the truth table */}
-                    <div className="absolute top-1 left-1.5 text-[8px] sm:text-[9px] text-slate-600 font-mono select-none opacity-50 group-hover:opacity-100 transition-opacity">
+                    {/* Decimal index — only visible on hover, scales with cell size */}
+                    <div className="absolute top-0.5 left-1 text-[6px] sm:text-[8px] text-slate-600 font-mono select-none opacity-50 group-hover:opacity-100 transition-opacity">
                       {decimal}
                     </div>
 
                     {/* Maxterms (0s) glow white to draw attention to the grouped terms in POS context */}
                     <span
-                      className={`text-2xl sm:text-3xl font-black font-mono transition-transform duration-300 group-hover:scale-110 z-10 relative
+                      className={`text-base sm:text-2xl md:text-3xl font-black font-mono transition-transform duration-300 group-hover:scale-110 z-10 relative
                         ${isMaxterm
                           ? "text-slate-100 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]"
                           : "text-slate-700/50"
